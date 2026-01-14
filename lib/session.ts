@@ -11,7 +11,13 @@ const cookie = {
     duration: 24 * 60 * 60 * 1000,
 }
 
-export async function encrypt(payload: any) {
+export type SessionPayload = {
+    userId: string
+    username: string
+    expiresAt: Date
+}
+
+export async function encrypt(payload: SessionPayload) {
     return new SignJWT(payload)
         .setProtectedHeader({ alg: 'HS256' })
         .setIssuedAt()
@@ -24,18 +30,18 @@ export async function decrypt(session: string | undefined = '') {
         const { payload } = await jwtVerify(session, key, {
             algorithms: ['HS256'],
         })
-        return payload
+        return payload as unknown as SessionPayload
     } catch (error) {
         return null
     }
 }
 
-export async function createSession(userId: string) {
-    const expires = new Date(Date.now() + cookie.duration)
-    const session = await encrypt({ userId, expires })
+export async function createSession(userId: string, username: string) {
+    const expiresAt = new Date(Date.now() + cookie.duration)
+    const session = await encrypt({ userId, username, expiresAt })
 
     const c = await cookies()
-    c.set(cookie.name, session, { ...cookie.options, expires })
+    c.set(cookie.name, session, { ...cookie.options, expires: expiresAt })
 }
 
 export async function verifySession() {
@@ -47,7 +53,7 @@ export async function verifySession() {
         redirect('/login')
     }
 
-    return { userId: payload.userId as string }
+    return { userId: payload.userId, username: payload.username }
 }
 
 export async function deleteSession() {

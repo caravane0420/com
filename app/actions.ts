@@ -47,7 +47,7 @@ export async function signup(prevState: any, formData: FormData) {
         data: { username, password: hashedPassword },
     })
 
-    await createSession(user.id)
+    await createSession(user.id, user.username)
     redirect('/')
 }
 
@@ -65,7 +65,7 @@ export async function login(prevState: any, formData: FormData) {
         return { errors: { username: ['아이디 또는 비밀번호가 잘못되었습니다.'] } }
     }
 
-    await createSession(user.id)
+    await createSession(user.id, user.username)
     redirect('/')
 }
 
@@ -81,7 +81,6 @@ export async function createPost(prevState: any, formData: FormData) {
         return { errors: result.error.flatten().fieldErrors }
     }
 
-    // Ensure 'main' gallery exists (Simple approach for single board)
     let gallery = await db.gallery.findUnique({ where: { id: 'main' } })
     if (!gallery) {
         gallery = await db.gallery.create({
