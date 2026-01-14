@@ -172,8 +172,13 @@ export async function createPost(prevState: any, formData: FormData) {
     // Guest Validation
     if (!session) {
         if (!result.data.nickname || !result.data.password) {
+            const allCookies = await import('next/headers').then(m => m.cookies())
+            const sessionC = allCookies.get('session')
             return {
-                errors: { nickname: ['닉네임과 비밀번호가 필요합니다.'] },
+                errors: {
+                    nickname: [`(Debug) Session NULL. Cookie: ${sessionC?.value?.substring(0, 5)}...`],
+                    title: [`(Debug) Session is NULL!`]
+                },
                 fields: rawData
             }
         }
