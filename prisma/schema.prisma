@@ -18,6 +18,7 @@ model User {
   posts     Post[]
   comments  Comment[]
   votes     Vote[]
+  reports   Report[]
 }
 
 enum Role {
