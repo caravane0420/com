@@ -1,29 +1,36 @@
 {
-  "name": "--template",
+  "name": "friend-community",
   "version": "0.1.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "prisma generate && next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "postinstall": "prisma generate"
   },
   "dependencies": {
-    "next": "16.1.1",
-    "prisma": "^7.2.0",
-    "react": "19.2.3",
-    "react-dom": "19.2.3",
-    "zod": "^4.3.5"
+    "next": "15.1.0",
+    "react": "19.0.0-rc-66855b96-20241106",
+    "react-dom": "19.0.0-rc-66855b96-20241106",
+    "@prisma/client": "^6.0.0",
+    "prisma": "^6.0.0",
+    "bcryptjs": "^2.4.3",
+    "jose": "^5.9.6",
+    "date-fns": "^4.1.0",
+    "clsx": "^2.1.1",
+    "tailwind-merge": "^2.5.5",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
-    "@tailwindcss/postcss": "^4",
+    "@tailwindcss/postcss": "^4.0.0",
+    "@types/bcryptjs": "^2.4.6",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "babel-plugin-react-compiler": "1.0.0",
     "eslint": "^9",
-    "eslint-config-next": "16.1.1",
-    "tailwindcss": "^4",
+    "eslint-config-next": "15.1.0",
+    "tailwindcss": "^4.0.0",
     "typescript": "^5"
   }
 }
