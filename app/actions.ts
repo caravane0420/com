@@ -227,7 +227,7 @@ export async function downvotePost(postId: string) {
 }
 
 // Emoticon Admin Actions
-export async function createEmoticonPack(formData: FormData) {
+export async function createEmoticonPack(prevState: any, formData: FormData) {
     const session = await verifySession()
     const user = await db.user.findUnique({ where: { id: session.userId } })
     if (user?.role !== 'ADMIN') return { error: 'Unauthorized' }
@@ -240,7 +240,7 @@ export async function createEmoticonPack(formData: FormData) {
     return { success: true, packId: pack.id }
 }
 
-export async function addEmoticon(packId: string, formData: FormData) {
+export async function addEmoticon(packId: string, prevState: any, formData: FormData) {
     const session = await verifySession()
     const user = await db.user.findUnique({ where: { id: session.userId } })
     if (user?.role !== 'ADMIN') return { error: 'Unauthorized' }

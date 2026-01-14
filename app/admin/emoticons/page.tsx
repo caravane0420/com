@@ -1,7 +1,8 @@
 import { db } from '@/lib/db'
 import { verifySession } from '@/lib/session'
-import { createEmoticonPack, addEmoticon } from '@/app/actions'
 import { redirect } from 'next/navigation'
+import CreatePackForm from '@/app/components/admin/CreatePackForm'
+import AddEmoticonForm from '@/app/components/admin/AddEmoticonForm'
 
 export default async function AdminEmoticonsPage() {
     // Check Admin
@@ -26,10 +27,7 @@ export default async function AdminEmoticonsPage() {
 
             <div className="bg-white p-6 border rounded shadow-sm mb-10">
                 <h2 className="font-bold mb-4">새 이모티콘 팩 만들기</h2>
-                <form action={createEmoticonPack} className="flex gap-2">
-                    <input name="name" placeholder="팩 이름 (예: 케장콘)" className="border p-2 rounded flex-1" required />
-                    <button className="bg-[#3b4890] text-white px-4 py-2 rounded font-bold">생성</button>
-                </form>
+                <CreatePackForm />
             </div>
 
             <div className="space-y-8">
@@ -46,11 +44,7 @@ export default async function AdminEmoticonsPage() {
                             ))}
                         </div>
 
-                        <form action={addEmoticon.bind(null, pack.id)} className="bg-gray-50 p-4 rounded flex gap-2 items-center">
-                            <span className="text-sm font-bold">이미지 추가:</span>
-                            <input type="file" name="image" required className="text-sm" />
-                            <button className="bg-gray-600 text-white px-3 py-1 text-sm rounded">업로드</button>
-                        </form>
+                        <AddEmoticonForm packId={pack.id} />
                     </div>
                 ))}
             </div>
