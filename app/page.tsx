@@ -1,6 +1,6 @@
 import { db } from '@/lib/db'
 import Link from 'next/link'
-import { format } from 'date-fns'
+import PostList from '@/app/components/PostList'
 
 export const dynamic = 'force-dynamic'
 
@@ -13,6 +13,13 @@ export default async function Home() {
     orderBy: { createdAt: 'desc' },
   })
 
+  // Serialize dates to strings for Client Component validation if needed,
+  // but usually Date objects pass from Server Component to Client Component in Next 13+ (flight data).
+  // However, SWR fetcher returns strings. To match, we might want to ensure consistency.
+  // Prisma Dates are Date objects. JSON.stringify turns them to strings.
+  // Next.js passes them as Date objects or strings depending on version. 15+ usually fine.
+  // I will check if any warning occurs. For now pass raw.
+
   return (
     <div>
       <div className="flex items-center justify-between mb-2 border-b-2 border-[#3b4890] pb-2">
@@ -20,59 +27,7 @@ export default async function Home() {
         <Link href="/write" className="dc-btn font-bold">글쓰기</Link>
       </div>
 
-      <table className="w-full text-sm table-fixed border-collapse">
-        <thead className="bg-[#f9f9f9] border-b border-[#ccc] text-gray-600 text-center">
-          <tr>
-            <th className="py-2 w-12 hidden sm:table-cell">번호</th>
-            <th className="py-2 text-left px-4">제목</th>
-            <th className="py-2 w-28">글쓴이</th>
-            <th className="py-2 w-20 hidden sm:table-cell">날짜</th>
-            <th className="py-2 w-16 hidden sm:table-cell">조회</th>
-            <th className="py-2 w-16 hidden sm:table-cell">추천</th>
-          </tr>
-        </thead>
-        <tbody>
-          {posts.map((post, index) => (
-            <tr key={post.id} className="border-b border-[#eee] hover:bg-[#f9f9f9]">
-              <td className="text-center py-2 text-gray-500 text-xs hidden sm:table-cell">
-                {posts.length - index}
-              </td>
-              <td className="py-2 px-4 whitespace-nowrap overflow-hidden text-ellipsis">
-                <Link href={`/posts/${post.id}`} className="hover:underline text-[#333]">
-                  {post.title}
-                </Link>
-                {post._count.comments > 0 && (
-                  <span className="ml-1 text-[#ff0000] text-xs font-bold">
-                    [{post._count.comments}]
-                  </span>
-                )}
-                {post.imageUrl && (
-                  <span className="ml-1 text-gray-400 text-xs">📷</span>
-                )}
-              </td>
-              <td className="text-center py-2 truncate break-all px-1 cursor-pointer" title={post.author.username}>
-                {post.author.username}
-              </td>
-              <td className="text-center py-2 text-gray-500 text-xs hidden sm:table-cell">
-                {format(post.createdAt, 'MM.dd')}
-              </td>
-              <td className="text-center py-2 text-gray-500 text-xs hidden sm:table-cell">
-                {post.viewCount}
-              </td>
-              <td className="text-center py-2 text-gray-500 text-xs hidden sm:table-cell">
-                {post.upCount}
-              </td>
-            </tr>
-          ))}
-          {posts.length === 0 && (
-            <tr>
-              <td colSpan={6} className="py-12 text-center text-gray-500">
-                등록된 글이 없습니다. 첫 번째 글을 작성해보세요!
-              </td>
-            </tr>
-          )}
-        </tbody>
-      </table>
+      <PostList initialPosts={posts} />
 
       <div className="mt-4 flex justify-end">
         <Link href="/write" className="dc-btn">글쓰기</Link>

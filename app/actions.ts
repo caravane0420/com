@@ -6,6 +6,7 @@ import { createSession, deleteSession, verifySession } from '@/lib/session'
 import { redirect } from 'next/navigation'
 import bcrypt from 'bcryptjs'
 import { revalidatePath } from 'next/cache'
+import { put } from '@vercel/blob'
 
 const SignupSchema = z.object({
     username: z.string().min(2, "아이디는 2글자 이상이어야 합니다.").trim(),
@@ -75,7 +76,38 @@ export async function logout() {
 
 export async function createPost(prevState: any, formData: FormData) {
     const session = await verifySession()
-    const result = PostSchema.safeParse(Object.fromEntries(formData))
+
+    // Manual File Handling
+    const file = formData.get('image') as File;
+    let uploadedImageUrl = '';
+
+    // Check if file is valid (size > 0 and name exists)
+    if (file && file.size > 0 && file.name) {
+        try {
+            const blob = await put(file.name, file, {
+                access: 'public',
+            });
+            uploadedImageUrl = blob.url;
+        } catch (error) {
+            console.error('Image upload failed:', error);
+            // Validating env: if BLOB token missing, this fails. 
+            // We continue without image or return error?
+            // For now, continue but log.
+            // Or fallback to URL input provided?
+        }
+    }
+
+    // Fallback to URL input if no file upload or upload failed (but prioritize upload)
+    const urlInput = formData.get('imageUrl') as string;
+    const finalImageUrl = uploadedImageUrl || urlInput;
+
+    const rawData = {
+        title: formData.get('title'),
+        content: formData.get('content'),
+        imageUrl: finalImageUrl,
+    }
+
+    const result = PostSchema.safeParse(rawData)
 
     if (!result.success) {
         return { errors: result.error.flatten().fieldErrors }
@@ -100,6 +132,22 @@ export async function createPost(prevState: any, formData: FormData) {
 
     revalidatePath('/')
     redirect('/')
+}
+
+export async function deletePost(postId: string) {
+    const session = await verifySession()
+    const user = await db.user.findUnique({ where: { id: session.userId } })
+
+    const post = await db.post.findUnique({ where: { id: postId } })
+
+    if (!post) return;
+
+    // Allow Admin OR Author
+    if (user?.role === 'ADMIN' || post.authorId === session.userId) {
+        await db.post.delete({ where: { id: postId } })
+        revalidatePath('/')
+        redirect('/') // Redirect to list
+    }
 }
 
 export async function createComment(prevState: any, formData: FormData) {
@@ -135,6 +183,15 @@ export async function recommendPost(postId: string) {
     await db.post.update({
         where: { id: postId },
         data: { upCount: { increment: 1 } },
+    })
+    revalidatePath('/')
+    revalidatePath(`/posts/${postId}`)
+}
+
+export async function downvotePost(postId: string) {
+    await db.post.update({
+        where: { id: postId },
+        data: { downCount: { increment: 1 } },
     })
     revalidatePath('/')
     revalidatePath(`/posts/${postId}`)

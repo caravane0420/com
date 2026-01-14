@@ -40,14 +40,21 @@ export default function WriteForm() {
                 {state?.errors?.content && <p className="text-red-500 text-xs mt-1">{state.errors.content}</p>}
             </div>
 
-            {/* Image upload placeholder */}
-            <div>
-                <label className="block text-sm font-bold text-gray-700 mb-1">이미지 (URL)</label>
+            {/* Image upload */}
+            <div className="p-4 border border-gray-200 bg-gray-50 rounded">
+                <label className="block text-sm font-bold text-gray-700 mb-2">이미지 첨부</label>
+                <input
+                    type="file"
+                    name="image"
+                    accept="image/*"
+                    className="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-[#3b4890] file:text-white hover:file:bg-[#2d3870]"
+                />
+                <p className="text-xs text-gray-500 mt-2">또는 이미지 URL 입력:</p>
                 <input
                     type="text"
                     name="imageUrl"
-                    className="w-full border border-gray-300 rounded px-3 py-2 text-sm"
-                    placeholder="이미지 URL을 입력하세요 (선택)"
+                    className="w-full mt-1 border border-gray-300 rounded px-2 py-1 text-sm outline-none"
+                    placeholder="https://..."
                 />
             </div>
 

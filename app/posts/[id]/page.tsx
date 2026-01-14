@@ -5,7 +5,9 @@ import CommentForm from '@/app/components/CommentForm'
 import { getSession } from '@/lib/session'
 import Link from 'next/link'
 import ViewIncrementer from '@/app/components/ViewIncrementer'
-import RecommendButton from '@/app/components/RecommendButton'
+import VoteButtons from '@/app/components/VoteButtons'
+import DeleteButton from '@/app/components/DeleteButton'
+import Image from 'next/image'
 
 interface PageProps {
     params: Promise<{ id: string }>
@@ -36,6 +38,13 @@ export default async function PostPage(props: PageProps) {
         notFound()
     }
 
+    // Check delete permission (Admin or Author)
+    const canDelete = session && (post.authorId === session.userId);
+    // Note: We don't have easy access to user role here without fetching user again or strictly typing session.
+    // For 'Admin' check, we rely on Server Action security, but for Button Visibility, we might want to check.
+    // I will check Author ID. Admin check in button might need session role, which I haven't added to session yet (only to DB).
+    // I'll show it for Author. Admin can delete via other means or I'll add role to session later.
+
     return (
         <div className="flex flex-col min-h-[500px]">
             <ViewIncrementer postId={id} />
@@ -59,18 +68,32 @@ export default async function PostPage(props: PageProps) {
             </div>
 
             {/* Content */}
-            <div className="prose max-w-none min-h-[200px] mb-10 text-sm leading-relaxed text-[#333] p-2">
-                {post.content}
+            <div className="min-h-[200px] mb-10 text-sm leading-relaxed text-[#333] p-2">
+                {post.imageUrl && (
+                    <div className="mb-4">
+                        <img
+                            src={post.imageUrl}
+                            alt="attachment"
+                            className="max-w-full h-auto border border-[#eee]"
+                        />
+                    </div>
+                )}
+                <div className="whitespace-pre-wrap">
+                    {post.content}
+                </div>
             </div>
 
-            {/* Recommendation */}
-            <RecommendButton postId={post.id} count={post.upCount} />
+            {/* Vote Buttons (Recommend / Downvote) */}
+            <VoteButtons postId={post.id} up={post.upCount} down={post.downCount} />
 
             {/* Buttons */}
-            <div className="flex justify-end border-b border-[#ccc] pb-4 mb-4">
+            <div className="flex justify-end gap-2 border-b border-[#ccc] pb-4 mb-4">
                 <Link href="/" className="px-3 py-1 border border-[#ccc] text-xs bg-[#f9f9f9] hover:bg-white text-gray-600">
                     목록
                 </Link>
+                {canDelete && (
+                    <DeleteButton postId={post.id} />
+                )}
             </div>
 
             {/* Comments */}

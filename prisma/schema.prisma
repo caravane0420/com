@@ -13,8 +13,14 @@ model User {
   password  String
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
+  role      Role      @default(USER) // Added Role
   posts     Post[]
   comments  Comment[]
+}
+
+enum Role {
+  USER
+  ADMIN
 }
 
 model Gallery {
@@ -32,6 +38,7 @@ model Post {
   imageUrl  String?
   viewCount Int      @default(0)
   upCount   Int      @default(0)
+  downCount Int      @default(0) // Added DownCount
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   
