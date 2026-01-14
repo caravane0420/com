@@ -13,10 +13,11 @@ model User {
   password  String
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
-  role      Role      @default(USER) // Added Role
+  role      Role      @default(USER)
+  exp       Int       @default(0) // Experience points
   posts     Post[]
   comments  Comment[]
-  votes     Vote[]     // Relation to Vote
+  votes     Vote[]
 }
 
 enum Role {
@@ -48,8 +49,13 @@ model Post {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   
-  authorId  String
-  author    User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  authorId  String?  // Optional for Guest
+  author    User?    @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  // Guest Fields
+  nickname  String?
+  password  String?
+  ipAddress String?
   
   galleryId String?  // Optional for migration compatibility, but logic will enforce it
   gallery   Gallery? @relation(fields: [galleryId], references: [id])
@@ -67,8 +73,18 @@ model Comment {
   postId    String
   post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
   
-  authorId  String
-  author    User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  authorId  String? // Optional for Guest
+  author    User?    @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  // Guest Fields
+  nickname  String?
+  password  String?
+  ipAddress String?
+
+  // Nested Comments
+  parentId  String?
+  parent    Comment?  @relation("CommentReplies", fields: [parentId], references: [id], onDelete: Cascade)
+  replies   Comment[] @relation("CommentReplies")
 }
 
 model Vote {

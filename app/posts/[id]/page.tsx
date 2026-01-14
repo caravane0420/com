@@ -9,6 +9,7 @@ import VoteButtons from '@/app/components/VoteButtons'
 import DeleteButton from '@/app/components/DeleteButton'
 import ReactMarkdown from 'react-markdown'
 import remarkBreaks from 'remark-breaks'
+import CommentItem from '@/app/components/CommentItem'
 
 interface PageProps {
     params: Promise<{ id: string }>
@@ -24,7 +25,14 @@ export default async function PostPage(props: PageProps) {
             include: {
                 author: true,
                 comments: {
-                    include: { author: true },
+                    where: { parentId: null }, // Fetch only root comments
+                    include: {
+                        author: true,
+                        replies: {
+                            include: { author: true },
+                            orderBy: { createdAt: 'asc' }
+                        }
+                    },
                     orderBy: { createdAt: 'asc' },
                 },
             },
@@ -101,22 +109,13 @@ export default async function PostPage(props: PageProps) {
             <div className="bg-[#f9f9f9] border border-[#ddd] p-4">
                 <div className="flex items-center gap-2 mb-3 border-b border-[#eee] pb-2">
                     <span className="font-bold text-[#3b4890] text-sm">전체 댓글</span>
-                    <span className="text-red-600 font-bold text-sm">{post.comments.length}개</span>
+                    {/* Note: Count might need adjustment if logic changes, currently root comments count? */}
+                    <span className="text-red-600 font-bold text-sm">댓글</span>
                 </div>
 
                 <div className="space-y-2 mb-6">
                     {post.comments.map((comment) => (
-                        <div key={comment.id} className="flex justify-between items-start border-b border-[#eee] pb-2 last:border-0 hover:bg-[#eee] transition-colors p-1">
-                            <div className="flex-1">
-                                <div className="flex items-center gap-2 mb-1">
-                                    <span className="text-xs font-bold text-[#333]">{comment.author.username}</span>
-                                    <span className="text-[10px] text-gray-400">
-                                        {format(comment.createdAt, 'MM.dd HH:mm')}
-                                    </span>
-                                </div>
-                                <p className="text-sm text-[#444] whitespace-pre-wrap">{comment.content}</p>
-                            </div>
-                        </div>
+                        <CommentItem key={comment.id} comment={comment} user={session} />
                     ))}
                     {post.comments.length === 0 && (
                         <div className="text-center text-gray-400 text-xs py-4">
@@ -125,14 +124,8 @@ export default async function PostPage(props: PageProps) {
                     )}
                 </div>
 
-                {/* Comment Form */}
-                {session ? (
-                    <CommentForm postId={post.id} />
-                ) : (
-                    <div className="bg-white border border-[#ddd] p-3 text-center text-xs text-gray-500">
-                        댓글을 작성하려면 <Link href="/login" className="text-blue-600 underline">로그인</Link>이 필요합니다.
-                    </div>
-                )}
+                {/* Comment Form - Always Show */}
+                <CommentForm postId={post.id} user={session} />
             </div>
         </div>
     )

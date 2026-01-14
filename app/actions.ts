@@ -2,12 +2,18 @@
 
 import { z } from 'zod'
 import { db } from '@/lib/db'
-import { createSession, deleteSession, verifySession } from '@/lib/session'
+import { createSession, deleteSession, verifySession, getSession } from '@/lib/session'
 import { redirect } from 'next/navigation'
 import bcrypt from 'bcryptjs'
 import { revalidatePath } from 'next/cache'
 import { put } from '@vercel/blob'
 import { VoteType } from '@prisma/client'
+import { headers } from 'next/headers'
+
+const GuestSchema = z.object({
+    nickname: z.string().min(2, "닉네임은 2글자 이상이어야 합니다."),
+    password: z.string().min(4, "비밀번호는 4글자 이상이어야 합니다.")
+})
 
 const SignupSchema = z.object({
     username: z.string().min(2, "아이디는 2글자 이상이어야 합니다.").trim(),
@@ -23,11 +29,16 @@ const PostSchema = z.object({
     title: z.string().min(1, "제목을 입력해주세요."),
     content: z.string().min(1, "내용을 입력해주세요."),
     imageUrl: z.string().optional(),
+    nickname: z.string().optional(),
+    password: z.string().optional(),
 })
 
 const CommentSchema = z.object({
     content: z.string().min(1, "내용을 입력해주세요."),
     postId: z.string(),
+    nickname: z.string().optional(),
+    password: z.string().optional(),
+    parentId: z.string().optional(), // For replies
 })
 
 export async function signup(prevState: any, formData: FormData) {
@@ -76,7 +87,12 @@ export async function logout() {
 }
 
 export async function createPost(prevState: any, formData: FormData) {
-    const session = await verifySession()
+    const session = await getSession() // Use getSession to allow null (Verification not strict)
+
+    // IP Handling
+    const headersList = await headers()
+    const ip = headersList.get('x-forwarded-for') || '127.0.0.1'
+    const maskedIp = ip.split('.').slice(0, 2).join('.') // "123.45"
 
     // Manual File Handling
     const file = formData.get('image') as File;
@@ -98,6 +114,8 @@ export async function createPost(prevState: any, formData: FormData) {
         title: formData.get('title'),
         content: formData.get('content'),
         imageUrl: finalImageUrl,
+        nickname: formData.get('nickname'),
+        password: formData.get('password'),
     }
 
     const result = PostSchema.safeParse(rawData)
@@ -106,6 +124,14 @@ export async function createPost(prevState: any, formData: FormData) {
         return { errors: result.error.flatten().fieldErrors }
     }
 
+    // Guest Validation
+    if (!session) {
+        if (!result.data.nickname || !result.data.password) {
+            return { errors: { nickname: ['닉네임과 비밀번호가 필요합니다.'] } }
+        }
+    }
+
+    // Gallery Logic
     let gallery = await db.gallery.findUnique({ where: { id: 'main' } })
     if (!gallery) {
         gallery = await db.gallery.create({
@@ -113,50 +139,110 @@ export async function createPost(prevState: any, formData: FormData) {
         })
     }
 
+    const postData: any = {
+        title: result.data.title,
+        content: result.data.content,
+        imageUrl: result.data.imageUrl,
+        galleryId: gallery.id,
+        ipAddress: maskedIp,
+    }
+
+    if (session) {
+        postData.authorId = session.userId
+    } else {
+        postData.nickname = result.data.nickname
+        postData.password = result.data.password // Should hash in real app, simplistic for now or hash?
+        // Let's hash guest password for consistency if we want
+        // postData.password = await bcrypt.hash(result.data.password!, 10)
+    }
+
+    // Hash password if guest
+    if (!session && result.data.password) {
+        postData.password = await bcrypt.hash(result.data.password, 10)
+    }
+
     await db.post.create({
-        data: {
-            title: result.data.title,
-            content: result.data.content,
-            imageUrl: result.data.imageUrl,
-            authorId: session.userId,
-            galleryId: gallery.id,
-        },
+        data: postData,
     })
+
+    // Experience
+    if (session) {
+        await db.user.update({ where: { id: session.userId }, data: { exp: { increment: 10 } } })
+    }
 
     revalidatePath('/')
     redirect('/')
 }
 
-export async function deletePost(postId: string) {
-    const session = await verifySession()
-    const user = await db.user.findUnique({ where: { id: session.userId } })
+// Updated deletePost to handle guest password verification
+export async function deletePost(postId: string, password?: string) {
+    const session = await getSession()
+    const user = session ? await db.user.findUnique({ where: { id: session.userId } }) : null
 
     const post = await db.post.findUnique({ where: { id: postId } })
+    if (!post) return { success: false, message: 'Post not found' }
 
-    if (!post) return;
+    let authorized = false
 
-    if (user?.role === 'ADMIN' || post.authorId === session.userId) {
+    if (session) {
+        if (user?.role === 'ADMIN' || post.authorId === session.userId) {
+            authorized = true
+        }
+    }
+
+    // Guest check
+    if (!authorized && !post.authorId && post.password && password) {
+        const match = await bcrypt.compare(password, post.password)
+        if (match) authorized = true
+    }
+
+    if (authorized) {
         await db.post.delete({ where: { id: postId } })
         revalidatePath('/')
-        redirect('/')
+        return { success: true }
     }
+
+    return { success: false, message: '권한이 없거나 비밀번호가 틀렸습니다.' }
 }
 
 export async function createComment(prevState: any, formData: FormData) {
-    const session = await verifySession()
+    const session = await getSession()
     const result = CommentSchema.safeParse(Object.fromEntries(formData))
 
     if (!result.success) {
         return { errors: result.error.flatten().fieldErrors }
     }
 
-    await db.comment.create({
-        data: {
-            content: result.data.content,
-            postId: result.data.postId,
-            authorId: session.userId,
-        },
-    })
+    // IP Logic
+    const headersList = await headers()
+    const ip = headersList.get('x-forwarded-for') || '127.0.0.1'
+    const maskedIp = ip.split('.').slice(0, 2).join('.')
+
+    const commentData: any = {
+        content: result.data.content,
+        postId: result.data.postId,
+        ipAddress: maskedIp,
+    }
+
+    if (result.data.parentId) {
+        commentData.parentId = result.data.parentId
+    }
+
+    if (session) {
+        commentData.authorId = session.userId
+    } else {
+        if (!result.data.nickname || !result.data.password) {
+            return { errors: { nickname: ['닉네임/비번 필요'] } }
+        }
+        commentData.nickname = result.data.nickname
+        commentData.password = await bcrypt.hash(result.data.password, 10)
+    }
+
+    await db.comment.create({ data: commentData })
+
+    if (session) {
+        await db.user.update({ where: { id: session.userId }, data: { exp: { increment: 2 } } })
+    }
 
     revalidatePath(`/posts/${result.data.postId}`)
     return { success: true }

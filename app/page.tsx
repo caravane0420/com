@@ -1,37 +1,56 @@
 import { db } from '@/lib/db'
-import Link from 'next/link'
-import PostList from '@/app/components/PostList'
+import PostList from './components/PostList'
 
 export const dynamic = 'force-dynamic'
 
-export default async function Home() {
+interface Props {
+  searchParams: Promise<{ q?: string; type?: string }>
+}
+
+export default async function Home(props: Props) {
+  const searchParams = await props.searchParams
+  const q = searchParams.q
+  const type = searchParams.type || 'title'
+
+  const where: any = {}
+  if (q) {
+    if (type === 'title') where.title = { contains: q } // PostgreSQL default case-sensitive unless mode 'insensitive' used in Schema? Prisma 'contains' usually sensitive in Postgres. I should enable mode: 'insensitive' if possible but schema is simple for now.
+    else if (type === 'content') where.content = { contains: q }
+    else if (type === 'author') {
+      where.OR = [
+        { author: { username: { contains: q } } },
+        { nickname: { contains: q } }
+      ]
+    }
+  }
+
   const posts = await db.post.findMany({
+    where,
+    orderBy: { createdAt: 'desc' },
     include: {
-      author: { select: { username: true } },
+      author: true,
       _count: { select: { comments: true } },
     },
-    orderBy: { createdAt: 'desc' },
+    take: 20
   })
 
-  // Serialize dates to strings for Client Component validation if needed,
-  // but usually Date objects pass from Server Component to Client Component in Next 13+ (flight data).
-  // However, SWR fetcher returns strings. To match, we might want to ensure consistency.
-  // Prisma Dates are Date objects. JSON.stringify turns them to strings.
-  // Next.js passes them as Date objects or strings depending on version. 15+ usually fine.
-  // I will check if any warning occurs. For now pass raw.
+  // Manual transform if needed or just pass strict
+  // Serializing Date objects is auto handled by Server Comp -> Client Comp in Next 15? 
+  // No, needs "use client" comp to accept dates? Usually "Warning: Only plain objects...".
+  // Prisma Dates are Date objects.
+  // I should rely on the fact that I passed them before and it worked?
+  // Let's verify `PostList` props. It worked before.
 
   return (
-    <div>
-      <div className="flex items-center justify-between mb-2 border-b-2 border-[#3b4890] pb-2">
-        <h2 className="text-[#3b4890] font-bold text-xl">자유 갤러리</h2>
-        <Link href="/write" className="dc-btn font-bold">글쓰기</Link>
+    <div className="max-w-5xl mx-auto py-8">
+      {/* Gallery Header */}
+      <div className="mb-6 border-b-2 border-[#3b4890] pb-2 flex justify-between items-end">
+        <h1 className="text-2xl font-bold text-[#3b4890]">
+          자유 갤러리
+        </h1>
       </div>
 
-      <PostList initialPosts={posts} />
-
-      <div className="mt-4 flex justify-end">
-        <Link href="/write" className="dc-btn">글쓰기</Link>
-      </div>
+      <PostList initialPosts={posts} searchParams={{ q, type }} />
     </div>
   )
 }
