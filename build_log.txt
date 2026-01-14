@@ -1,76 +1,70 @@
-15:39:53.237 Running build in Washington, D.C., USA (East) – iad1
-15:39:53.238 Build machine configuration: 2 cores, 8 GB
-15:39:53.406 Cloning github.com/caravane0420/com (Branch: main, Commit: 5c62fcf)
-15:39:53.627 Cloning completed: 221.000ms
-15:39:55.476 Restored build cache from previous deployment (24kQKRh16DTTu7wafHXdbHeL9G8W)
-15:39:55.806 Running "vercel build"
-15:39:56.495 Vercel CLI 50.1.6
-15:39:56.825 Installing dependencies...
-15:39:58.104 
-15:39:58.105 > friend-community@0.1.0 postinstall
-15:39:58.106 > prisma generate
-15:39:58.106 
-15:39:59.027 Prisma schema loaded from prisma/schema.prisma
-15:39:59.320 
-15:39:59.321 ✔ Generated Prisma Client (v6.19.2) to ./node_modules/@prisma/client in 145ms
-15:39:59.321 
-15:39:59.321 Start by importing your Prisma Client (See: https://pris.ly/d/importing-client)
-15:39:59.321 
-15:39:59.321 Tip: Need your database queries to be 1000x faster? Accelerate offers you that and more: https://pris.ly/tip-2-accelerate
-15:39:59.321 
-15:39:59.344 
-15:39:59.344 up to date in 2s
-15:39:59.345 
-15:39:59.345 225 packages are looking for funding
-15:39:59.346   run `npm fund` for details
-15:39:59.375 Detected Next.js version: 16.1.1
-15:39:59.386 Running "npm run build"
-15:39:59.485 
-15:39:59.486 > friend-community@0.1.0 build
-15:39:59.486 > prisma generate && next build
-15:39:59.486 
-15:40:00.247 Prisma schema loaded from prisma/schema.prisma
-15:40:00.489 ┌─────────────────────────────────────────────────────────┐
-15:40:00.489 │  Update available 6.19.2 -> 7.2.0                       │
-15:40:00.489 │                                                         │
-15:40:00.489 │  This is a major update - please follow the guide at    │
-15:40:00.490 │  https://pris.ly/d/major-version-upgrade                │
-15:40:00.490 │                                                         │
-15:40:00.490 │  Run the following to update                            │
-15:40:00.490 │    npm i --save-dev prisma@latest                       │
-15:40:00.490 │    npm i @prisma/client@latest                          │
-15:40:00.490 └─────────────────────────────────────────────────────────┘
-15:40:00.491 
-15:40:00.491 ✔ Generated Prisma Client (v6.19.2) to ./node_modules/@prisma/client in 97ms
-15:40:00.491 
-15:40:00.492 Start by importing your Prisma Client (See: https://pris.ly/d/importing-client)
-15:40:00.492 
-15:40:00.492 Tip: Need your database queries to be 1000x faster? Accelerate offers you that and more: https://pris.ly/tip-2-accelerate
-15:40:00.492 
-15:40:01.480 ▲ Next.js 16.1.1 (Turbopack)
-15:40:01.481 
-15:40:01.489 ⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
-15:40:01.517   Creating an optimized production build ...
-15:40:14.673 
-15:40:14.674 > Build error occurred
-15:40:14.677 Error: Turbopack build failed with 1 errors:
-15:40:14.678 ./app/components/PostList.tsx:35:25
-15:40:14.678 Parsing ecmascript source code failed
-15:40:14.679 [0m [90m 33 |[39m     [36mreturn[39m (
-15:40:14.679  [90m 34 |[39m                     [33m<[39m[33mth[39m className[33m=[39m[32m"py-2 text-left px-4"[39m[33m>[39m제목[33m<[39m[33m/[39m[33mth[39m[33m>[39m
-15:40:14.680 [31m[1m>[22m[39m[90m 35 |[39m                     [33m<[39m[33mth[39m className[33m=[39m[32m"py-2 w-28"[39m[33m>[39m글쓴이[33m<[39m[33m/[39m[33mth[39m[33m>[39m
-15:40:14.680  [90m    |[39m                         [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
-15:40:14.680  [90m 36 |[39m                     [33m<[39m[33mth[39m className[33m=[39m[32m"py-2 w-20 hidden sm:table-cell"[39m[33m>[39m날짜[33m<[39m[33m/[39m[33mth[39m[33m>[39m
-15:40:14.681  [90m 37 |[39m                     [33m<[39m[33mth[39m className[33m=[39m[32m"py-2 w-16 hidden sm:table-cell"[39m[33m>[39m조회[33m<[39m[33m/[39m[33mth[39m[33m>[39m
-15:40:14.681  [90m 38 |[39m                     [33m<[39m[33mth[39m className[33m=[39m[32m"py-2 w-16 hidden sm:table-cell"[39m[33m>[39m추천[33m<[39m[33m/[39m[33mth[39m[33m>[39m[0m
-15:40:14.682 
-15:40:14.682 Expected ',', got 'className'
-15:40:14.682 
-15:40:14.683 Import trace:
-15:40:14.683   Server Component:
-15:40:14.683     ./app/components/PostList.tsx
-15:40:14.686     ./app/page.tsx
-15:40:14.687 
-15:40:14.687 
-15:40:14.687     at <unknown> (./app/components/PostList.tsx:35:25)
-15:40:14.749 Error: Command "npm run build" exited with 1
+15:46:38.709 Running build in Washington, D.C., USA (East) – iad1
+15:46:38.710 Build machine configuration: 2 cores, 8 GB
+15:46:38.849 Cloning github.com/caravane0420/com (Branch: main, Commit: 76bdcb2)
+15:46:39.104 Cloning completed: 255.000ms
+15:46:40.681 Restored build cache from previous deployment (24kQKRh16DTTu7wafHXdbHeL9G8W)
+15:46:40.979 Running "vercel build"
+15:46:41.441 Vercel CLI 50.1.6
+15:46:41.816 Installing dependencies...
+15:46:43.206 
+15:46:43.208 > friend-community@0.1.0 postinstall
+15:46:43.208 > prisma generate
+15:46:43.208 
+15:46:44.195 Prisma schema loaded from prisma/schema.prisma
+15:46:44.473 
+15:46:44.473 ✔ Generated Prisma Client (v6.19.2) to ./node_modules/@prisma/client in 137ms
+15:46:44.474 
+15:46:44.474 Start by importing your Prisma Client (See: https://pris.ly/d/importing-client)
+15:46:44.474 
+15:46:44.474 Tip: Need your database queries to be 1000x faster? Accelerate offers you that and more: https://pris.ly/tip-2-accelerate
+15:46:44.474 
+15:46:44.495 
+15:46:44.495 up to date in 2s
+15:46:44.496 
+15:46:44.496 225 packages are looking for funding
+15:46:44.496   run `npm fund` for details
+15:46:44.524 Detected Next.js version: 16.1.1
+15:46:44.529 Running "npm run build"
+15:46:45.082 
+15:46:45.082 > friend-community@0.1.0 build
+15:46:45.083 > prisma generate && next build
+15:46:45.083 
+15:46:45.842 Prisma schema loaded from prisma/schema.prisma
+15:46:46.095 ┌─────────────────────────────────────────────────────────┐
+15:46:46.096 │  Update available 6.19.2 -> 7.2.0                       │
+15:46:46.097 │                                                         │
+15:46:46.098 │  This is a major update - please follow the guide at    │
+15:46:46.098 │  https://pris.ly/d/major-version-upgrade                │
+15:46:46.098 │                                                         │
+15:46:46.099 │  Run the following to update                            │
+15:46:46.099 │    npm i --save-dev prisma@latest                       │
+15:46:46.099 │    npm i @prisma/client@latest                          │
+15:46:46.100 └─────────────────────────────────────────────────────────┘
+15:46:46.100 
+15:46:46.101 ✔ Generated Prisma Client (v6.19.2) to ./node_modules/@prisma/client in 145ms
+15:46:46.101 
+15:46:46.101 Start by importing your Prisma Client (See: https://pris.ly/d/importing-client)
+15:46:46.101 
+15:46:46.102 Tip: Want to turn off tips and other hints? https://pris.ly/tip-4-nohints
+15:46:46.102 
+15:46:47.087 ▲ Next.js 16.1.1 (Turbopack)
+15:46:47.088 
+15:46:47.096 ⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+15:46:47.123   Creating an optimized production build ...
+15:46:59.477 ✓ Compiled successfully in 11.8s
+15:46:59.478   Running TypeScript ...
+15:47:04.197 Failed to compile.
+15:47:04.198 
+15:47:04.199 ./app/components/CommentItem.tsx:52:25
+15:47:04.199 Type error: Type '{ userId: string; } | null | undefined' is not assignable to type '{ userId: string; username: string; } | null | undefined'.
+15:47:04.200   Property 'username' is missing in type '{ userId: string; }' but required in type '{ userId: string; username: string; }'.
+15:47:04.200 
+15:47:04.200 [0m [90m 50 |[39m                         postId[33m=[39m{comment[33m.[39mpostId}
+15:47:04.200  [90m 51 |[39m                         parentId[33m=[39m{comment[33m.[39mid}
+15:47:04.200 [31m[1m>[22m[39m[90m 52 |[39m                         user[33m=[39m{user}
+15:47:04.201  [90m    |[39m                         [31m[1m^[22m[39m
+15:47:04.201  [90m 53 |[39m                         onSuccess[33m=[39m{() [33m=>[39m setIsReplying([36mfalse[39m)}
+15:47:04.201  [90m 54 |[39m                     [33m/[39m[33m>[39m
+15:47:04.201  [90m 55 |[39m                 [33m<[39m[33m/[39m[33mdiv[39m[33m>[39m[0m
+15:47:04.243 Next.js build worker exited with code: 1 and signal: null
+15:47:04.296 Error: Command "npm run build" exited with 1

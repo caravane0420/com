@@ -12,7 +12,7 @@ import { deletePost } from '@/app/actions' // Use deletePost logic but need dele
 
 interface CommentItemProps {
     comment: any
-    user?: { userId: string } | null
+    user?: { userId: string; username: string } | null
 }
 
 export default function CommentItem({ comment, user }: CommentItemProps) {
