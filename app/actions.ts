@@ -6,7 +6,7 @@ import { createSession, deleteSession, verifySession, getSession } from '@/lib/s
 import { redirect } from 'next/navigation'
 import bcrypt from 'bcryptjs'
 import { revalidatePath } from 'next/cache'
-import { put } from '@vercel/blob'
+import { put, del } from '@vercel/blob'
 import { headers } from 'next/headers'
 import { checkRestrictions } from '@/lib/restrictions'
 
@@ -435,4 +435,41 @@ export async function addEmoticon(packId: string, prevState: any, formData: Form
     } catch (e) {
         return { error: 'Upload failed' }
     }
+}
+
+export async function deleteEmoticonPack(packId: string) {
+    const session = await verifySession()
+    const user = await db.user.findUnique({ where: { id: session.userId } })
+    if (user?.role !== 'ADMIN') return { error: 'Unauthorized' }
+
+    const pack = await db.emoticonPack.findUnique({
+        where: { id: packId },
+        include: { emoticons: true }
+    })
+
+    if (!pack) return { error: 'Pack not found' }
+
+    // Delete all blobs
+    if (pack.emoticons.length > 0) {
+        await Promise.all(pack.emoticons.map(e => del(e.imageUrl)))
+    }
+
+    await db.emoticonPack.delete({ where: { id: packId } })
+    revalidatePath('/admin/emoticons')
+    return { success: true }
+}
+
+export async function deleteEmoticon(emoticonId: string) {
+    const session = await verifySession()
+    const user = await db.user.findUnique({ where: { id: session.userId } })
+    if (user?.role !== 'ADMIN') return { error: 'Unauthorized' }
+
+    const emoticon = await db.emoticon.findUnique({ where: { id: emoticonId } })
+    if (!emoticon) return { error: 'Emoticon not found' }
+
+    await del(emoticon.imageUrl)
+    await db.emoticon.delete({ where: { id: emoticonId } })
+
+    revalidatePath('/admin/emoticons')
+    return { success: true }
 }

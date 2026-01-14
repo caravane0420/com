@@ -3,6 +3,7 @@ import { verifySession } from '@/lib/session'
 import { redirect } from 'next/navigation'
 import CreatePackForm from '@/app/components/admin/CreatePackForm'
 import AddEmoticonForm from '@/app/components/admin/AddEmoticonForm'
+import { deleteEmoticonPack, deleteEmoticon } from '@/app/actions'
 
 export default async function AdminEmoticonsPage() {
     // Check Admin
@@ -35,12 +36,32 @@ export default async function AdminEmoticonsPage() {
                     <div key={pack.id} className="bg-white p-6 border rounded shadow-sm">
                         <div className="flex justify-between items-center mb-4 border-b pb-2">
                             <h3 className="font-bold text-lg">{pack.name}</h3>
-                            <span className="text-sm text-gray-500">{pack.emoticons.length}개</span>
+                            <div className="flex items-center gap-2">
+                                <span className="text-sm text-gray-500">{pack.emoticons.length}개</span>
+                                <form action={async () => {
+                                    'use server'
+                                    await deleteEmoticonPack(pack.id)
+                                }}>
+                                    <button type="submit" className="text-red-500 hover:text-red-700 text-sm border border-red-200 px-2 py-1 rounded hover:bg-red-50 transition-colors">
+                                        팩 삭제
+                                    </button>
+                                </form>
+                            </div>
                         </div>
 
                         <div className="grid grid-cols-6 gap-4 mb-4">
                             {pack.emoticons.map(emo => (
-                                <img key={emo.id} src={emo.imageUrl} className="w-full h-auto border rounded p-1" />
+                                <div key={emo.id} className="relative group">
+                                    <img src={emo.imageUrl} className="w-full h-auto border rounded p-1" />
+                                    <form action={async () => {
+                                        'use server'
+                                        await deleteEmoticon(emo.id)
+                                    }} className="absolute top-0 right-0 opacity-0 group-hover:opacity-100 transition-opacity">
+                                        <button type="submit" className="bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs shadow hover:bg-red-600" title="삭제">
+                                            ×
+                                        </button>
+                                    </form>
+                                </div>
                             ))}
                         </div>
 
