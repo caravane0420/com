@@ -96,7 +96,7 @@ export async function resolveReport(reportId: string, action: 'RESOLVE' | 'DISMI
 
     await db.report.update({
         where: { id: reportId },
-        data: { status: action === 'DISMISS' ? 'DISMISS' : 'RESOLVED' } // If Deleted, also Marked Resolved
+        data: { status: action === 'DISMISS' ? 'DISMISSED' : 'RESOLVED' } // If Deleted, also Marked Resolved
     })
 
     if (action === 'DELETE_CONTENT') {
