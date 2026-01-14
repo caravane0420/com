@@ -7,6 +7,7 @@ import { redirect } from 'next/navigation'
 import bcrypt from 'bcryptjs'
 import { revalidatePath } from 'next/cache'
 import { put } from '@vercel/blob'
+import { VoteType } from '@prisma/client'
 
 const SignupSchema = z.object({
     username: z.string().min(2, "아이디는 2글자 이상이어야 합니다.").trim(),
@@ -81,23 +82,15 @@ export async function createPost(prevState: any, formData: FormData) {
     const file = formData.get('image') as File;
     let uploadedImageUrl = '';
 
-    // Check if file is valid (size > 0 and name exists)
     if (file && file.size > 0 && file.name) {
         try {
-            const blob = await put(file.name, file, {
-                access: 'public',
-            });
+            const blob = await put(file.name, file, { access: 'public' });
             uploadedImageUrl = blob.url;
         } catch (error) {
             console.error('Image upload failed:', error);
-            // Validating env: if BLOB token missing, this fails. 
-            // We continue without image or return error?
-            // For now, continue but log.
-            // Or fallback to URL input provided?
         }
     }
 
-    // Fallback to URL input if no file upload or upload failed (but prioritize upload)
     const urlInput = formData.get('imageUrl') as string;
     const finalImageUrl = uploadedImageUrl || urlInput;
 
@@ -142,11 +135,10 @@ export async function deletePost(postId: string) {
 
     if (!post) return;
 
-    // Allow Admin OR Author
     if (user?.role === 'ADMIN' || post.authorId === session.userId) {
         await db.post.delete({ where: { id: postId } })
         revalidatePath('/')
-        redirect('/') // Redirect to list
+        redirect('/')
     }
 }
 
@@ -171,6 +163,9 @@ export async function createComment(prevState: any, formData: FormData) {
 }
 
 export async function incrementView(postId: string) {
+    // View count logic remains simple (no detailed duplicate check user side here to avoid complexity on every load, 
+    // but typically handled via cookie/IP on middleware or dedicated route. 
+    // Leaving as-is for simplicity unless strict requirement.)
     await db.post.update({
         where: { id: postId },
         data: { viewCount: { increment: 1 } },
@@ -180,19 +175,91 @@ export async function incrementView(postId: string) {
 }
 
 export async function recommendPost(postId: string) {
-    await db.post.update({
-        where: { id: postId },
-        data: { upCount: { increment: 1 } },
+    const session = await verifySession()
+
+    const existing = await db.vote.findUnique({
+        where: { userId_postId: { userId: session.userId, postId } }
     })
+
+    if (existing) {
+        return { success: false, message: '이미 참여했습니다.' }
+    }
+
+    await db.$transaction([
+        db.vote.create({
+            data: { userId: session.userId, postId, type: VoteType.UP }
+        }),
+        db.post.update({
+            where: { id: postId },
+            data: { upCount: { increment: 1 } },
+        })
+    ])
+
     revalidatePath('/')
     revalidatePath(`/posts/${postId}`)
+    return { success: true, message: '추천하였습니다.' }
 }
 
 export async function downvotePost(postId: string) {
-    await db.post.update({
-        where: { id: postId },
-        data: { downCount: { increment: 1 } },
+    const session = await verifySession()
+
+    const existing = await db.vote.findUnique({
+        where: { userId_postId: { userId: session.userId, postId } }
     })
+
+    if (existing) {
+        return { success: false, message: '이미 참여했습니다.' }
+    }
+
+    await db.$transaction([
+        db.vote.create({
+            data: { userId: session.userId, postId, type: VoteType.DOWN }
+        }),
+        db.post.update({
+            where: { id: postId },
+            data: { downCount: { increment: 1 } },
+        })
+    ])
+
     revalidatePath('/')
     revalidatePath(`/posts/${postId}`)
+    return { success: true, message: '비추천하였습니다.' }
+}
+
+// Emoticon Admin Actions
+export async function createEmoticonPack(formData: FormData) {
+    const session = await verifySession()
+    const user = await db.user.findUnique({ where: { id: session.userId } })
+    if (user?.role !== 'ADMIN') return { error: 'Unauthorized' }
+
+    const name = formData.get('name') as string
+    if (!name) return { error: 'Name required' }
+
+    const pack = await db.emoticonPack.create({ data: { name } })
+    revalidatePath('/admin/emoticons')
+    return { success: true, packId: pack.id }
+}
+
+export async function addEmoticon(packId: string, formData: FormData) {
+    const session = await verifySession()
+    const user = await db.user.findUnique({ where: { id: session.userId } })
+    if (user?.role !== 'ADMIN') return { error: 'Unauthorized' }
+
+    const file = formData.get('image') as File
+    if (!file) return { error: 'File required' }
+
+    try {
+        const blob = await put(file.name, file, { access: 'public' })
+        await db.emoticon.create({
+            data: {
+                imageUrl: blob.url,
+                packId,
+                code: `~img:${blob.url}~` // Simple code logic
+            }
+        })
+        revalidatePath('/admin/emoticons')
+        return { success: true }
+    } catch (e) {
+        return { error: 'Upload failed' }
+    }
 }

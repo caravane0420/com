@@ -1,12 +1,21 @@
 'use client'
 
-import { useActionState } from 'react'
+import { useActionState, useState, useRef } from 'react'
 import { createPost } from '@/app/actions'
+import EmoticonPicker from './EmoticonPicker'
 
 export const dynamic = 'force-dynamic'
 
 export default function WriteForm() {
     const [state, action, isPending] = useActionState(createPost, null)
+    const [content, setContent] = useState('')
+    const textareaRef = useRef<HTMLTextAreaElement>(null)
+
+    const handleEmoticonSelect = (url: string) => {
+        const markdown = `\n![sticker](${url})\n`
+        setContent(prev => prev + markdown)
+        // Ideally insert at cursor, but append is safe fallback for now
+    }
 
     return (
         <form action={action} className="w-full max-w-2xl mx-auto space-y-4">
@@ -29,11 +38,17 @@ export default function WriteForm() {
             </div>
 
             <div>
-                <label htmlFor="content" className="block text-sm font-bold text-gray-700 mb-1">내용</label>
+                <div className="flex justify-between items-center mb-1">
+                    <label htmlFor="content" className="block text-sm font-bold text-gray-700">내용</label>
+                    <EmoticonPicker onSelect={handleEmoticonSelect} />
+                </div>
                 <textarea
                     id="content"
                     name="content"
+                    ref={textareaRef}
                     rows={12}
+                    value={content}
+                    onChange={(e) => setContent(e.target.value)}
                     className="w-full border border-gray-300 rounded px-3 py-2 focus:ring-1 focus:ring-[#3b4890] focus:border-[#3b4890] outline-none"
                     placeholder="내용을 입력하세요"
                 />
@@ -42,7 +57,7 @@ export default function WriteForm() {
 
             {/* Image upload */}
             <div className="p-4 border border-gray-200 bg-gray-50 rounded">
-                <label className="block text-sm font-bold text-gray-700 mb-2">이미지 첨부</label>
+                <label className="block text-sm font-bold text-gray-700 mb-2">대표 이미지 첨부</label>
                 <input
                     type="file"
                     name="image"

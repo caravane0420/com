@@ -16,11 +16,17 @@ model User {
   role      Role      @default(USER) // Added Role
   posts     Post[]
   comments  Comment[]
+  votes     Vote[]     // Relation to Vote
 }
 
 enum Role {
   USER
   ADMIN
+}
+
+enum VoteType {
+  UP
+  DOWN
 }
 
 model Gallery {
@@ -49,6 +55,7 @@ model Post {
   gallery   Gallery? @relation(fields: [galleryId], references: [id])
 
   comments  Comment[]
+  votes     Vote[]    // Relation to Vote
 }
 
 model Comment {
@@ -62,4 +69,33 @@ model Comment {
   
   authorId  String
   author    User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+}
+
+model Vote {
+  id        String   @id @default(uuid())
+  type      VoteType
+  userId    String
+  postId    String
+  createdAt DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, postId])
+}
+
+model EmoticonPack {
+  id           String     @id @default(uuid())
+  name         String
+  thumbnailUrl String?
+  emoticons    Emoticon[]
+  createdAt    DateTime   @default(now())
+}
+
+model Emoticon {
+  id        String       @id @default(uuid())
+  imageUrl  String
+  code      String?
+  packId    String
+  pack      EmoticonPack @relation(fields: [packId], references: [id], onDelete: Cascade)
 }

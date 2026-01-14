@@ -2,22 +2,21 @@
 
 import { recommendPost, downvotePost } from '@/app/actions'
 import { useTransition } from 'react'
-import { clsx } from 'clsx'
 
 export default function VoteButtons({ postId, up, down }: { postId: string, up: number, down: number }) {
     const [isPending, startTransition] = useTransition()
 
     const handleRecommend = () => {
-        startTransition(() => {
-            recommendPost(postId)
-            alert('추천하였습니다.')
+        startTransition(async () => {
+            const res = await recommendPost(postId)
+            alert(res.message)
         })
     }
 
     const handleDownvote = () => {
-        startTransition(() => {
-            downvotePost(postId)
-            alert('비추천하였습니다.')
+        startTransition(async () => {
+            const res = await downvotePost(postId)
+            alert(res.message)
         })
     }
 

@@ -7,7 +7,8 @@ import Link from 'next/link'
 import ViewIncrementer from '@/app/components/ViewIncrementer'
 import VoteButtons from '@/app/components/VoteButtons'
 import DeleteButton from '@/app/components/DeleteButton'
-import Image from 'next/image'
+import ReactMarkdown from 'react-markdown'
+import remarkBreaks from 'remark-breaks'
 
 interface PageProps {
     params: Promise<{ id: string }>
@@ -15,10 +16,7 @@ interface PageProps {
 
 export default async function PostPage(props: PageProps) {
     const params = await props.params;
-
-    const {
-        id
-    } = params;
+    const { id } = params;
 
     const [post, session] = await Promise.all([
         db.post.findUnique({
@@ -38,12 +36,7 @@ export default async function PostPage(props: PageProps) {
         notFound()
     }
 
-    // Check delete permission (Admin or Author)
     const canDelete = session && (post.authorId === session.userId);
-    // Note: We don't have easy access to user role here without fetching user again or strictly typing session.
-    // For 'Admin' check, we rely on Server Action security, but for Button Visibility, we might want to check.
-    // I will check Author ID. Admin check in button might need session role, which I haven't added to session yet (only to DB).
-    // I'll show it for Author. Admin can delete via other means or I'll add role to session later.
 
     return (
         <div className="flex flex-col min-h-[500px]">
@@ -63,6 +56,7 @@ export default async function PostPage(props: PageProps) {
                     <div className="flex items-center gap-2">
                         <span>조회 {post.viewCount}</span>
                         <span>추천 {post.upCount}</span>
+                        <span>비추 {post.downCount}</span>
                     </div>
                 </div>
             </div>
@@ -78,8 +72,15 @@ export default async function PostPage(props: PageProps) {
                         />
                     </div>
                 )}
-                <div className="whitespace-pre-wrap">
-                    {post.content}
+                <div className="markdown-body">
+                    <ReactMarkdown
+                        remarkPlugins={[remarkBreaks]}
+                        components={{
+                            img: (props) => <img {...props} className="max-w-full h-auto inline-block" style={{ maxHeight: '400px' }} />
+                        }}
+                    >
+                        {post.content}
+                    </ReactMarkdown>
                 </div>
             </div>
 
