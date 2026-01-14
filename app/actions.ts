@@ -170,7 +170,7 @@ export async function createPost(prevState: any, formData: FormData) {
     let gallery = await db.gallery.findUnique({ where: { id: 'main' } })
     if (!gallery) {
         gallery = await db.gallery.create({
-            data: { id: 'main', name: '자유 갤러리' }
+            data: { id: 'main', name: '각설이 갤러리' }
         })
     }
 
