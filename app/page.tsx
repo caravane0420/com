@@ -46,7 +46,7 @@ export default async function Home(props: Props) {
       {/* Gallery Header */}
       <div className="mb-6 border-b-2 border-[#3b4890] pb-2 flex justify-between items-end">
         <h1 className="text-2xl font-bold text-[#3b4890]">
-          각설이 갤러리
+          이삭 갤러리
         </h1>
       </div>
 

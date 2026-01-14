@@ -10,8 +10,13 @@ interface WriteFormProps {
     user?: { userId: string; username: string } | null
 }
 
+interface ActionState {
+    errors?: Record<string, string[] | undefined>
+    fields?: Record<string, string>
+}
+
 export default function WriteForm({ user }: WriteFormProps) {
-    const [state, action, isPending] = useActionState(createPost, null)
+    const [state, action, isPending] = useActionState(createPost as any, null as ActionState | null)
     const [content, setContent] = useState('')
     const textareaRef = useRef<HTMLTextAreaElement>(null)
 
@@ -37,6 +42,7 @@ export default function WriteForm({ user }: WriteFormProps) {
                             name="nickname"
                             className="w-full border border-gray-300 rounded px-3 py-2 outline-none text-sm"
                             placeholder="닉네임"
+                            defaultValue={state?.fields?.nickname ?? ''}
                             required
                         />
                     </div>
@@ -61,6 +67,7 @@ export default function WriteForm({ user }: WriteFormProps) {
                     name="title"
                     className="w-full border border-gray-300 rounded px-3 py-2 focus:ring-1 focus:ring-[#3b4890] focus:border-[#3b4890] outline-none"
                     placeholder="제목을 입력하세요"
+                    defaultValue={state?.fields?.title ?? ''}
                     required
                 />
                 {state?.errors?.title && <p className="text-red-500 text-xs mt-1">{state.errors.title}</p>}

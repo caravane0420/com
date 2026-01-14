@@ -126,7 +126,14 @@ export async function createPost(prevState: any, formData: FormData) {
     // [New] Check Restrictions
     const restriction = await checkRestrictions(ip, session?.userId, formData.get('content') as string)
     if (restriction.restricted) {
-        return { errors: { content: [restriction.reason!] } } // Return error to form
+        return {
+            errors: { content: [restriction.reason!] },
+            fields: { // Return fields to repopulate form
+                title: formData.get('title') as string,
+                content: formData.get('content') as string,
+                nickname: formData.get('nickname') as string,
+            }
+        }
     }
 
     // Manual File Handling
@@ -156,13 +163,19 @@ export async function createPost(prevState: any, formData: FormData) {
     const result = PostSchema.safeParse(rawData)
 
     if (!result.success) {
-        return { errors: result.error.flatten().fieldErrors }
+        return {
+            errors: result.error.flatten().fieldErrors,
+            fields: rawData
+        }
     }
 
     // Guest Validation
     if (!session) {
         if (!result.data.nickname || !result.data.password) {
-            return { errors: { nickname: ['닉네임과 비밀번호가 필요합니다.'] } }
+            return {
+                errors: { nickname: ['닉네임과 비밀번호가 필요합니다.'] },
+                fields: rawData
+            }
         }
     }
 
@@ -170,7 +183,7 @@ export async function createPost(prevState: any, formData: FormData) {
     let gallery = await db.gallery.findUnique({ where: { id: 'main' } })
     if (!gallery) {
         gallery = await db.gallery.create({
-            data: { id: 'main', name: '각설이 갤러리' }
+            data: { id: 'main', name: '이삭 갤러리' }
         })
     }
 

@@ -13,7 +13,7 @@ export default async function Navbar() {
                         <span className="text-yellow-300 font-extrabold">DC</span>Friends
                     </Link>
                     <nav className="flex gap-4 text-sm font-bold text-gray-200">
-                        <Link href="/" className="hover:text-white">각설이 갤러리</Link>
+                        <Link href="/" className="hover:text-white">이삭 갤러리</Link>
                         <Link href="#" className="hover:text-white opacity-50 cursor-not-allowed">마이너 갤러리</Link>
                     </nav>
                 </div>
