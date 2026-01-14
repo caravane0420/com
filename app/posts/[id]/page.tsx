@@ -10,6 +10,7 @@ import DeleteButton from '@/app/components/DeleteButton'
 import ReactMarkdown from 'react-markdown'
 import remarkBreaks from 'remark-breaks'
 import CommentItem from '@/app/components/CommentItem'
+import ReportButton from '@/app/components/ReportButton'
 
 interface PageProps {
     params: Promise<{ id: string }>
@@ -67,6 +68,7 @@ export default async function PostPage(props: PageProps) {
                         <span>조회 {post.viewCount}</span>
                         <span>추천 {post.upCount}</span>
                         <span>비추 {post.downCount}</span>
+                        <ReportButton targetType="POST" targetId={post.id} />
                     </div>
                 </div>
             </div>
@@ -115,16 +117,16 @@ export default async function PostPage(props: PageProps) {
                     <span className="text-red-600 font-bold text-sm">댓글</span>
                 </div>
 
-                <div className="space-y-2 mb-6">
-                    {post.comments.map((comment) => (
-                        <CommentItem key={comment.id} comment={comment} user={session} />
+                <div className="space-y-4">
+                    {post.comments.map((comment: any) => (
+                        <CommentItem key={comment.id} comment={comment} user={session ? { userId: session.userId, username: session.username } : null} />
                     ))}
-                    {post.comments.length === 0 && (
-                        <div className="text-center text-gray-400 text-xs py-4">
-                            등록된 댓글이 없습니다.
-                        </div>
-                    )}
                 </div>
+                {post.comments.length === 0 && (
+                    <div className="text-center text-gray-400 text-xs py-4">
+                        등록된 댓글이 없습니다.
+                    </div>
+                )}
 
                 {/* Comment Form - Always Show */}
                 <CommentForm postId={post.id} user={session} />

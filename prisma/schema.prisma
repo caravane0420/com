@@ -115,3 +115,43 @@ model Emoticon {
   packId    String
   pack      EmoticonPack @relation(fields: [packId], references: [id], onDelete: Cascade)
 }
+
+model Report {
+  id        String   @id @default(uuid())
+  reason    String
+  details   String?
+  status    ReportStatus @default(PENDING) // PENDING, RESOLVED, DISMISSED
+  targetType String // POST, COMMENT
+  targetId  String
+  
+  reporterId String?
+  reporter   User?   @relation(fields: [reporterId], references: [id])
+  
+  createdAt DateTime @default(now())
+}
+
+enum ReportStatus {
+  PENDING
+  RESOLVED
+  DISMISSED
+}
+
+model Ban {
+  id        String   @id @default(uuid())
+  type      BanType  // IP, USER
+  value     String   // IP address or UserId
+  reason    String?
+  expiresAt DateTime?
+  createdAt DateTime @default(now())
+}
+
+enum BanType {
+  IP
+  USER
+}
+
+model ForbiddenWord {
+  id        String   @id @default(uuid())
+  word      String   @unique
+  createdAt DateTime @default(now())
+}

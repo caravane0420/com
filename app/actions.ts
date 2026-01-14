@@ -7,8 +7,8 @@ import { redirect } from 'next/navigation'
 import bcrypt from 'bcryptjs'
 import { revalidatePath } from 'next/cache'
 import { put } from '@vercel/blob'
-import { VoteType } from '@prisma/client'
 import { headers } from 'next/headers'
+import { checkRestrictions } from '@/lib/restrictions'
 
 const GuestSchema = z.object({
     nickname: z.string().min(2, "닉네임은 2글자 이상이어야 합니다."),
@@ -40,6 +40,35 @@ const CommentSchema = z.object({
     password: z.string().optional(),
     parentId: z.string().optional(), // For replies
 })
+
+// Report Schema
+const ReportSchema = z.object({
+    reason: z.string().min(1, "신고 사유를 입력해주세요."),
+    details: z.string().optional(),
+    targetType: z.enum(['POST', 'COMMENT']),
+    targetId: z.string(),
+})
+
+export async function createReport(prevState: any, formData: FormData) {
+    const session = await getSession()
+    const result = ReportSchema.safeParse(Object.fromEntries(formData))
+
+    if (!result.success) {
+        return { errors: result.error.flatten().fieldErrors }
+    }
+
+    await db.report.create({
+        data: {
+            reason: result.data.reason,
+            details: result.data.details,
+            targetType: result.data.targetType,
+            targetId: result.data.targetId,
+            reporterId: session?.userId,
+        }
+    })
+
+    return { success: true, message: '신고가 접수되었습니다.' }
+}
 
 export async function signup(prevState: any, formData: FormData) {
     const result = SignupSchema.safeParse(Object.fromEntries(formData))
@@ -93,6 +122,12 @@ export async function createPost(prevState: any, formData: FormData) {
     const headersList = await headers()
     const ip = headersList.get('x-forwarded-for') || '127.0.0.1'
     const maskedIp = ip.split('.').slice(0, 2).join('.') // "123.45"
+
+    // [New] Check Restrictions
+    const restriction = await checkRestrictions(ip, session?.userId, formData.get('content') as string)
+    if (restriction.restricted) {
+        return { errors: { content: [restriction.reason!] } } // Return error to form
+    }
 
     // Manual File Handling
     const file = formData.get('image') as File;
@@ -207,16 +242,23 @@ export async function deletePost(postId: string, password?: string) {
 
 export async function createComment(prevState: any, formData: FormData) {
     const session = await getSession()
-    const result = CommentSchema.safeParse(Object.fromEntries(formData))
-
-    if (!result.success) {
-        return { errors: result.error.flatten().fieldErrors }
-    }
 
     // IP Logic
     const headersList = await headers()
     const ip = headersList.get('x-forwarded-for') || '127.0.0.1'
     const maskedIp = ip.split('.').slice(0, 2).join('.')
+
+    // [New] Check Restrictions
+    const restriction = await checkRestrictions(ip, session?.userId, formData.get('content') as string)
+    if (restriction.restricted) {
+        return { errors: { content: [restriction.reason!] } }
+    }
+
+    const result = CommentSchema.safeParse(Object.fromEntries(formData))
+
+    if (!result.success) {
+        return { errors: result.error.flatten().fieldErrors }
+    }
 
     const commentData: any = {
         content: result.data.content,
@@ -273,7 +315,7 @@ export async function recommendPost(postId: string) {
 
     await db.$transaction([
         db.vote.create({
-            data: { userId: session.userId, postId, type: VoteType.UP }
+            data: { userId: session.userId, postId, type: 'UP' }
         }),
         db.post.update({
             where: { id: postId },
@@ -299,7 +341,7 @@ export async function downvotePost(postId: string) {
 
     await db.$transaction([
         db.vote.create({
-            data: { userId: session.userId, postId, type: VoteType.DOWN }
+            data: { userId: session.userId, postId, type: 'DOWN' }
         }),
         db.post.update({
             where: { id: postId },
