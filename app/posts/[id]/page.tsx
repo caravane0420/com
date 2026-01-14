@@ -57,7 +57,9 @@ export default async function PostPage(props: PageProps) {
                 </h1>
                 <div className="flex justify-between items-center text-xs text-gray-500">
                     <div className="flex items-center gap-2">
-                        <span className="font-bold text-[#333]">{post.author.username}</span>
+                        <span className="font-bold text-[#333]">
+                            {post.author ? post.author.username : `${post.nickname} (${post.ipAddress})`}
+                        </span>
                         <span className="text-gray-300">|</span>
                         <span>{format(post.createdAt, 'yyyy.MM.dd HH:mm')}</span>
                     </div>
