@@ -1,74 +1,76 @@
-15:22:07.154 Running build in Washington, D.C., USA (East) – iad1
-15:22:07.155 Build machine configuration: 2 cores, 8 GB
-15:22:07.303 Cloning github.com/caravane0420/com (Branch: main, Commit: 8acc9b7)
-15:22:07.613 Cloning completed: 310.000ms
-15:22:09.185 Restored build cache from previous deployment (H7gpHdMtJi2KGj665t23aLFU3rX4)
-15:22:09.475 Running "vercel build"
-15:22:09.905 Vercel CLI 50.1.6
-15:22:10.235 Installing dependencies...
-15:22:12.394 
-15:22:12.395 > friend-community@0.1.0 postinstall
-15:22:12.396 > prisma generate
-15:22:12.396 
-15:22:13.337 Prisma schema loaded from prisma/schema.prisma
-15:22:13.617 
-15:22:13.618 ✔ Generated Prisma Client (v6.19.2) to ./node_modules/@prisma/client in 141ms
-15:22:13.618 
-15:22:13.618 Start by importing your Prisma Client (See: https://pris.ly/d/importing-client)
-15:22:13.618 
-15:22:13.618 Tip: Need your database queries to be 1000x faster? Accelerate offers you that and more: https://pris.ly/tip-2-accelerate
-15:22:13.619 
-15:22:13.641 
-15:22:13.641 added 82 packages in 3s
-15:22:13.642 
-15:22:13.642 225 packages are looking for funding
-15:22:13.642   run `npm fund` for details
-15:22:13.683 Detected Next.js version: 16.1.1
-15:22:13.687 Running "npm run build"
-15:22:13.797 
-15:22:13.798 > friend-community@0.1.0 build
-15:22:13.798 > prisma generate && next build
-15:22:13.798 
-15:22:14.588 Prisma schema loaded from prisma/schema.prisma
-15:22:14.807 ┌─────────────────────────────────────────────────────────┐
-15:22:14.808 │  Update available 6.19.2 -> 7.2.0                       │
-15:22:14.808 │                                                         │
-15:22:14.809 │  This is a major update - please follow the guide at    │
-15:22:14.809 │  https://pris.ly/d/major-version-upgrade                │
-15:22:14.809 │                                                         │
-15:22:14.809 │  Run the following to update                            │
-15:22:14.810 │    npm i --save-dev prisma@latest                       │
-15:22:14.810 │    npm i @prisma/client@latest                          │
-15:22:14.810 └─────────────────────────────────────────────────────────┘
-15:22:14.811 
-15:22:14.811 ✔ Generated Prisma Client (v6.19.2) to ./node_modules/@prisma/client in 106ms
-15:22:14.811 
-15:22:14.811 Start by importing your Prisma Client (See: https://pris.ly/d/importing-client)
-15:22:14.812 
-15:22:14.812 Tip: Want to turn off tips and other hints? https://pris.ly/tip-4-nohints
-15:22:14.812 
-15:22:15.807 ▲ Next.js 16.1.1 (Turbopack)
-15:22:15.808 
-15:22:15.815 ⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
-15:22:15.843   Creating an optimized production build ...
-15:22:27.979 ✓ Compiled successfully in 11.6s
-15:22:27.983   Running TypeScript ...
-15:22:32.670 Failed to compile.
-15:22:32.670 
-15:22:32.671 ./app/admin/emoticons/page.tsx:29:23
-15:22:32.671 Type error: Type '(formData: FormData) => Promise<{ error: string; success?: undefined; packId?: undefined; } | { success: boolean; packId: string; error?: undefined; }>' is not assignable to type 'string | ((formData: FormData) => void | Promise<void>) | undefined'.
-15:22:32.671   Type '(formData: FormData) => Promise<{ error: string; success?: undefined; packId?: undefined; } | { success: boolean; packId: string; error?: undefined; }>' is not assignable to type '(formData: FormData) => void | Promise<void>'.
-15:22:32.671     Type 'Promise<{ error: string; success?: undefined; packId?: undefined; } | { success: boolean; packId: string; error?: undefined; }>' is not assignable to type 'void | Promise<void>'.
-15:22:32.672       Type 'Promise<{ error: string; success?: undefined; packId?: undefined; } | { success: boolean; packId: string; error?: undefined; }>' is not assignable to type 'Promise<void>'.
-15:22:32.672         Type '{ error: string; success?: undefined; packId?: undefined; } | { success: boolean; packId: string; error?: undefined; }' is not assignable to type 'void'.
-15:22:32.672           Type '{ error: string; success?: undefined; packId?: undefined; }' is not assignable to type 'void'.
-15:22:32.672 
-15:22:32.672 [0m [90m 27 |[39m             [33m<[39m[33mdiv[39m className[33m=[39m[32m"bg-white p-6 border rounded shadow-sm mb-10"[39m[33m>[39m
-15:22:32.673  [90m 28 |[39m                 [33m<[39m[33mh2[39m className[33m=[39m[32m"font-bold mb-4"[39m[33m>[39m새 이모티콘 팩 만들기[33m<[39m[33m/[39m[33mh2[39m[33m>[39m
-15:22:32.673 [31m[1m>[22m[39m[90m 29 |[39m                 [33m<[39m[33mform[39m action[33m=[39m{createEmoticonPack} className[33m=[39m[32m"flex gap-2"[39m[33m>[39m
-15:22:32.677  [90m    |[39m                       [31m[1m^[22m[39m
-15:22:32.677  [90m 30 |[39m                     [33m<[39m[33minput[39m name[33m=[39m[32m"name"[39m placeholder[33m=[39m[32m"팩 이름 (예: 케장콘)"[39m className[33m=[39m[32m"border p-2 rounded flex-1"[39m required [33m/[39m[33m>[39m
-15:22:32.678  [90m 31 |[39m                     [33m<[39m[33mbutton[39m className[33m=[39m[32m"bg-[#3b4890] text-white px-4 py-2 rounded font-bold"[39m[33m>[39m생성[33m<[39m[33m/[39m[33mbutton[39m[33m>[39m
-15:22:32.678  [90m 32 |[39m                 [33m<[39m[33m/[39m[33mform[39m[33m>[39m[0m
-15:22:32.714 Next.js build worker exited with code: 1 and signal: null
-15:22:32.761 Error: Command "npm run build" exited with 1
+15:39:53.237 Running build in Washington, D.C., USA (East) – iad1
+15:39:53.238 Build machine configuration: 2 cores, 8 GB
+15:39:53.406 Cloning github.com/caravane0420/com (Branch: main, Commit: 5c62fcf)
+15:39:53.627 Cloning completed: 221.000ms
+15:39:55.476 Restored build cache from previous deployment (24kQKRh16DTTu7wafHXdbHeL9G8W)
+15:39:55.806 Running "vercel build"
+15:39:56.495 Vercel CLI 50.1.6
+15:39:56.825 Installing dependencies...
+15:39:58.104 
+15:39:58.105 > friend-community@0.1.0 postinstall
+15:39:58.106 > prisma generate
+15:39:58.106 
+15:39:59.027 Prisma schema loaded from prisma/schema.prisma
+15:39:59.320 
+15:39:59.321 ✔ Generated Prisma Client (v6.19.2) to ./node_modules/@prisma/client in 145ms
+15:39:59.321 
+15:39:59.321 Start by importing your Prisma Client (See: https://pris.ly/d/importing-client)
+15:39:59.321 
+15:39:59.321 Tip: Need your database queries to be 1000x faster? Accelerate offers you that and more: https://pris.ly/tip-2-accelerate
+15:39:59.321 
+15:39:59.344 
+15:39:59.344 up to date in 2s
+15:39:59.345 
+15:39:59.345 225 packages are looking for funding
+15:39:59.346   run `npm fund` for details
+15:39:59.375 Detected Next.js version: 16.1.1
+15:39:59.386 Running "npm run build"
+15:39:59.485 
+15:39:59.486 > friend-community@0.1.0 build
+15:39:59.486 > prisma generate && next build
+15:39:59.486 
+15:40:00.247 Prisma schema loaded from prisma/schema.prisma
+15:40:00.489 ┌─────────────────────────────────────────────────────────┐
+15:40:00.489 │  Update available 6.19.2 -> 7.2.0                       │
+15:40:00.489 │                                                         │
+15:40:00.489 │  This is a major update - please follow the guide at    │
+15:40:00.490 │  https://pris.ly/d/major-version-upgrade                │
+15:40:00.490 │                                                         │
+15:40:00.490 │  Run the following to update                            │
+15:40:00.490 │    npm i --save-dev prisma@latest                       │
+15:40:00.490 │    npm i @prisma/client@latest                          │
+15:40:00.490 └─────────────────────────────────────────────────────────┘
+15:40:00.491 
+15:40:00.491 ✔ Generated Prisma Client (v6.19.2) to ./node_modules/@prisma/client in 97ms
+15:40:00.491 
+15:40:00.492 Start by importing your Prisma Client (See: https://pris.ly/d/importing-client)
+15:40:00.492 
+15:40:00.492 Tip: Need your database queries to be 1000x faster? Accelerate offers you that and more: https://pris.ly/tip-2-accelerate
+15:40:00.492 
+15:40:01.480 ▲ Next.js 16.1.1 (Turbopack)
+15:40:01.481 
+15:40:01.489 ⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+15:40:01.517   Creating an optimized production build ...
+15:40:14.673 
+15:40:14.674 > Build error occurred
+15:40:14.677 Error: Turbopack build failed with 1 errors:
+15:40:14.678 ./app/components/PostList.tsx:35:25
+15:40:14.678 Parsing ecmascript source code failed
+15:40:14.679 [0m [90m 33 |[39m     [36mreturn[39m (
+15:40:14.679  [90m 34 |[39m                     [33m<[39m[33mth[39m className[33m=[39m[32m"py-2 text-left px-4"[39m[33m>[39m제목[33m<[39m[33m/[39m[33mth[39m[33m>[39m
+15:40:14.680 [31m[1m>[22m[39m[90m 35 |[39m                     [33m<[39m[33mth[39m className[33m=[39m[32m"py-2 w-28"[39m[33m>[39m글쓴이[33m<[39m[33m/[39m[33mth[39m[33m>[39m
+15:40:14.680  [90m    |[39m                         [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+15:40:14.680  [90m 36 |[39m                     [33m<[39m[33mth[39m className[33m=[39m[32m"py-2 w-20 hidden sm:table-cell"[39m[33m>[39m날짜[33m<[39m[33m/[39m[33mth[39m[33m>[39m
+15:40:14.681  [90m 37 |[39m                     [33m<[39m[33mth[39m className[33m=[39m[32m"py-2 w-16 hidden sm:table-cell"[39m[33m>[39m조회[33m<[39m[33m/[39m[33mth[39m[33m>[39m
+15:40:14.681  [90m 38 |[39m                     [33m<[39m[33mth[39m className[33m=[39m[32m"py-2 w-16 hidden sm:table-cell"[39m[33m>[39m추천[33m<[39m[33m/[39m[33mth[39m[33m>[39m[0m
+15:40:14.682 
+15:40:14.682 Expected ',', got 'className'
+15:40:14.682 
+15:40:14.683 Import trace:
+15:40:14.683   Server Component:
+15:40:14.683     ./app/components/PostList.tsx
+15:40:14.686     ./app/page.tsx
+15:40:14.687 
+15:40:14.687 
+15:40:14.687     at <unknown> (./app/components/PostList.tsx:35:25)
+15:40:14.749 Error: Command "npm run build" exited with 1
