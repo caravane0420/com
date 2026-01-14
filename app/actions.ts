@@ -413,23 +413,25 @@ export async function createEmoticonPack(prevState: any, formData: FormData) {
     return { success: true, packId: pack.id }
 }
 
-export async function addEmoticon(packId: string, prevState: any, formData: FormData) {
+export async function addEmoticons(packId: string, prevState: any, formData: FormData) {
     const session = await verifySession()
     const user = await db.user.findUnique({ where: { id: session.userId } })
     if (user?.role !== 'ADMIN') return { error: 'Unauthorized' }
 
-    const file = formData.get('image') as File
-    if (!file) return { error: 'File required' }
+    const files = formData.getAll('images') as File[]
+    if (!files || files.length === 0) return { error: 'Files required' }
 
     try {
-        const blob = await put(file.name, file, { access: 'public' })
-        await db.emoticon.create({
-            data: {
-                imageUrl: blob.url,
-                packId,
-                code: `~img:${blob.url}~` // Simple code logic
-            }
-        })
+        await Promise.all(files.map(async (file) => {
+            const blob = await put(file.name, file, { access: 'public' })
+            await db.emoticon.create({
+                data: {
+                    imageUrl: blob.url,
+                    packId,
+                    code: `~img:${blob.url}~`
+                }
+            })
+        }))
         revalidatePath('/admin/emoticons')
         return { success: true }
     } catch (e) {
