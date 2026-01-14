@@ -45,6 +45,7 @@ export default function WriteForm({ user }: WriteFormProps) {
                             defaultValue={state?.fields?.nickname ?? ''}
                             required
                         />
+                        {state?.errors?.nickname && <p className="text-red-500 text-xs mt-1">{state.errors.nickname}</p>}
                     </div>
                     <div className="flex-1">
                         <label className="block text-sm font-bold text-gray-700 mb-1">비밀번호</label>
@@ -55,6 +56,7 @@ export default function WriteForm({ user }: WriteFormProps) {
                             placeholder="비밀번호"
                             required
                         />
+                        {state?.errors?.password && <p className="text-red-500 text-xs mt-1">{state.errors.password}</p>}
                     </div>
                 </div>
             )}
