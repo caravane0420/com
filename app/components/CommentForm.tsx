@@ -15,28 +15,25 @@ export default function CommentForm({ postId }: { postId: string }) {
     }, [state?.success])
 
     return (
-        <form ref={formRef} action={action} className="mt-6 flex gap-4">
+        <form ref={formRef} action={action} className="bg-white border border-[#ccc] p-3">
             <input type="hidden" name="postId" value={postId} />
-            <div className="flex-1">
-                <label htmlFor="comment" className="sr-only">
-                    Add a comment
-                </label>
+            <div className="flex gap-2">
                 <textarea
                     id="comment"
                     name="content"
                     rows={3}
                     required
-                    className="block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm placeholder:text-gray-400 focus:border-black focus:outline-none focus:ring-1 focus:ring-black"
-                    placeholder="Add a comment..."
+                    className="flex-1 resize-none border border-[#ddd] bg-[#fff] p-2 text-sm focus:border-[#3b4890] focus:outline-none"
+                    placeholder="Leave a comment..."
                 />
+                <button
+                    type="submit"
+                    disabled={isPending}
+                    className="w-20 bg-[#3b4890] text-white text-sm font-bold disabled:opacity-50 hover:bg-[#2d3870]"
+                >
+                    {isPending ? '...' : 'Add'}
+                </button>
             </div>
-            <button
-                type="submit"
-                disabled={isPending}
-                className="h-fit rounded-md bg-white px-4 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 disabled:opacity-50"
-            >
-                {isPending ? 'Posting...' : 'Post'}
-            </button>
         </form>
     )
 }

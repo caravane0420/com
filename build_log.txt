@@ -1,74 +1,90 @@
-14:35:11.781 Running build in Washington, D.C., USA (East) – iad1
-14:35:11.782 Build machine configuration: 2 cores, 8 GB
-14:35:11.909 Cloning github.com/caravane0420/com (Branch: main, Commit: 2306f7b)
-14:35:11.910 Previous build caches not available.
-14:35:12.228 Cloning completed: 318.000ms
-14:35:12.599 Running "vercel build"
-14:35:13.037 Vercel CLI 50.1.6
-14:35:13.376 Installing dependencies...
-14:35:49.705 
-14:35:49.706 > friend-community@0.1.0 postinstall
-14:35:49.706 > prisma generate
-14:35:49.706 
-14:35:50.715 Prisma schema loaded from prisma/schema.prisma
-14:35:50.900 ┌─────────────────────────────────────────────────────────┐
-14:35:50.901 │  Update available 6.19.2 -> 7.2.0                       │
-14:35:50.901 │                                                         │
-14:35:50.901 │  This is a major update - please follow the guide at    │
-14:35:50.901 │  https://pris.ly/d/major-version-upgrade                │
-14:35:50.901 │                                                         │
-14:35:50.901 │  Run the following to update                            │
-14:35:50.901 │    npm i --save-dev prisma@latest                       │
-14:35:50.901 │    npm i @prisma/client@latest                          │
-14:35:50.902 └─────────────────────────────────────────────────────────┘
-14:35:50.902 
-14:35:50.902 ✔ Generated Prisma Client (v6.19.2) to ./node_modules/@prisma/client in 62ms
-14:35:50.902 
-14:35:50.902 Start by importing your Prisma Client (See: https://pris.ly/d/importing-client)
-14:35:50.902 
-14:35:50.902 Tip: Need your database queries to be 1000x faster? Accelerate offers you that and more: https://pris.ly/tip-2-accelerate
-14:35:50.902 
-14:35:50.929 
-14:35:50.930 added 374 packages in 37s
-14:35:50.930 
-14:35:50.930 148 packages are looking for funding
-14:35:50.930   run `npm fund` for details
-14:35:50.978 Detected Next.js version: 16.1.1
-14:35:50.987 Running "npm run build"
-14:35:51.095 
-14:35:51.095 > friend-community@0.1.0 build
-14:35:51.096 > prisma generate && next build
-14:35:51.096 
-14:35:52.124 Prisma schema loaded from prisma/schema.prisma
-14:35:52.315 
-14:35:52.316 ✔ Generated Prisma Client (v6.19.2) to ./node_modules/@prisma/client in 60ms
-14:35:52.316 
-14:35:52.316 Start by importing your Prisma Client (See: https://pris.ly/d/importing-client)
-14:35:52.317 
-14:35:52.317 Tip: Want to turn off tips and other hints? https://pris.ly/tip-4-nohints
-14:35:52.317 
-14:35:53.245 ⚠ Invalid next.config.ts options detected: 
-14:35:53.245 ⚠     Unrecognized key(s) in object: 'reactCompiler' at "experimental"
-14:35:53.245 ⚠ See more info here: https://nextjs.org/docs/messages/invalid-next-config
-14:35:53.248 ⚠ `experimental.reactCompiler` has been moved to `reactCompiler`. Please update your next.config.ts file accordingly.
-14:35:53.258 Attention: Next.js now collects completely anonymous telemetry regarding usage.
-14:35:53.259 This information is used to shape Next.js' roadmap and prioritize features.
-14:35:53.259 You can learn more, including how to opt-out if you'd not like to participate in this anonymous program, by visiting the following URL:
-14:35:53.259 https://nextjs.org/telemetry
-14:35:53.259 
-14:35:53.275 ▲ Next.js 16.1.1 (Turbopack)
-14:35:53.275 - Experiments (use with caution):
-14:35:53.276   ? reactCompiler (invalid experimental key)
-14:35:53.276 
-14:35:53.286 ⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
-14:35:53.312   Creating an optimized production build ...
-14:36:02.209 
-14:36:02.209 > Build error occurred
-14:36:02.212 Error: Turbopack build failed with 1 errors:
-14:36:02.212 ./next.config.ts
-14:36:02.212 Failed to resolve package babel-plugin-react-compiler while attempting to resolve React Compiler
-14:36:02.212 React compiler is enabled in next.config.ts. We attempted to resolve React Compiler relative to the next package. Is babel-plugin-react-compiler installed in your node_modules directory?
-14:36:02.212 
-14:36:02.212 
-14:36:02.212     at ignore-listed frames
-14:36:02.274 Error: Command "npm run build" exited with 1
+
+Jan 14 14:39:44.25
+GET
+200
+com-beta-lime.vercel.app
+/favicon.ico
+Jan 14 14:39:43.85
+GET
+500
+com-beta-lime.vercel.app
+/
+Error [PrismaClientKnownRequestError]: Invalid `prisma.post.findMany()` invocation: The column `Post.imageUrl` does not exist in the current database. at async f (.next/server/chunks/ssr/[root-of-the-server]__d2b8dada._.js:1:9906) { code: 'P2022', meta: [Object], clientVersion: '6.19.2', digest: '2428610742' }
+Jan 14 14:39:42.33
+GET
+500
+com-beta-lime.vercel.app
+/
+Error [PrismaClientKnownRequestError]: Invalid `prisma.post.findMany()` invocation: The column `Post.imageUrl` does not exist in the current database. at async f (.next/server/chunks/ssr/[root-of-the-server]__d2b8dada._.js:1:9906) { code: 'P2022', meta: [Object], clientVersion: '6.19.2', digest: '2428610742' }
+Jan 14 14:39:33.05
+GET
+200
+com-inxa783ye-caravane0420s-projects.vercel.app
+/favicon.ico
+Jan 14 14:39:33.04
+GET
+200
+com-inxa783ye-caravane0420s-projects.vercel.app
+/favicon.ico
+Jan 14 14:39:32.10
+GET
+200
+com-inxa783ye-caravane0420s-projects.vercel.app
+/favicon.ico
+Jan 14 14:39:31.66
+GET
+500
+com-inxa783ye-caravane0420s-projects.vercel.app
+/
+Error [PrismaClientKnownRequestError]: Invalid `prisma.post.findMany()` invocation: The column `Post.imageUrl` does not exist in the current database. at async f (.next/server/chunks/ssr/[root-of-the-server]__d2b8dada._.js:1:9906) { code: 'P2022', meta: [Object], clientVersion: '6.19.2', digest: '2428610742' }
+Jan 14 14:39:31.36
+GET
+200
+com-inxa783ye-caravane0420s-projects.vercel.app
+/favicon.ico
+Jan 14 14:39:30.81
+GET
+200
+com-inxa783ye-caravane0420s-projects.vercel.app
+/favicon.ico
+Jan 14 14:39:30.81
+GET
+200
+com-inxa783ye-caravane0420s-projects.vercel.app
+/favicon.ico
+Jan 14 14:39:30.11
+GET
+---
+com-inxa783ye-caravane0420s-projects.vercel.app
+/
+Error [PrismaClientKnownRequestError]: Invalid `prisma.post.findMany()` invocation: The column `Post.imageUrl` does not exist in the current database. at async f (.next/server/chunks/ssr/[root-of-the-server]__d2b8dada._.js:1:9906) { code: 'P2022', meta: [Object], clientVersion: '6.19.2', digest: '2428610742' }
+Jan 14 14:39:29.66
+GET
+500
+com-inxa783ye-caravane0420s-projects.vercel.app
+/
+Error [PrismaClientKnownRequestError]: Invalid `prisma.post.findMany()` invocation: The column `Post.imageUrl` does not exist in the current database. at async f (.next/server/chunks/ssr/[root-of-the-server]__d2b8dada._.js:1:9906) { code: 'P2022', meta: [Object], clientVersion: '6.19.2', digest: '2428610742' }
+Jan 14 14:39:28.37
+GET
+500
+com-inxa783ye-caravane0420s-projects.vercel.app
+/
+Error [PrismaClientKnownRequestError]: Invalid `prisma.post.findMany()` invocation: The column `Post.imageUrl` does not exist in the current database. at async f (.next/server/chunks/ssr/[root-of-the-server]__d2b8dada._.js:1:9906) { code: 'P2022', meta: [Object], clientVersion: '6.19.2', digest: '2428610742' }
+Jan 14 14:39:28.30
+GET
+500
+com-inxa783ye-caravane0420s-projects.vercel.app
+/
+Error [PrismaClientKnownRequestError]: Invalid `prisma.post.findMany()` invocation: The column `Post.imageUrl` does not exist in the current database. at async f (.next/server/chunks/ssr/[root-of-the-server]__d2b8dada._.js:1:9906) { code: 'P2022', meta: [Object], clientVersion: '6.19.2', digest: '2428610742' }
+Jan 14 14:39:27.30
+GET
+500
+com-inxa783ye-caravane0420s-projects.vercel.app
+/
+Error [PrismaClientKnownRequestError]: Invalid `prisma.post.findMany()` invocation: The column `Post.imageUrl` does not exist in the current database. at async f (.next/server/chunks/ssr/[root-of-the-server]__d2b8dada._.js:1:9906) { code: 'P2022', meta: [Object], clientVersion: '6.19.2', digest: '2428610742' }
+Jan 14 14:39:27.28
+GET
+500
+com-inxa783ye-caravane0420s-projects.vercel.app
+/
+Error [PrismaClientKnownRequestError]: Invalid `prisma.post.findMany()` invocation: The column `Post.imageUrl` does not exist in the current database. at async f (.next/server/chunks/ssr/[root-of-the-server]__d2b8dada._.js:1:9906) { code: 'P2022', meta: [Object], clientVersion: '6.19.2', digest: '2428610742' }

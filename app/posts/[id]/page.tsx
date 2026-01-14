@@ -1,8 +1,9 @@
 import { db } from '@/lib/db'
-import { formatDistanceToNow } from 'date-fns'
+import { format } from 'date-fns'
 import { notFound } from 'next/navigation'
 import CommentForm from '@/app/components/CommentForm'
 import { getSession } from '@/lib/session'
+import Link from 'next/link'
 
 interface PageProps {
     params: Promise<{ id: string }>
@@ -34,51 +35,71 @@ export default async function PostPage(props: PageProps) {
     }
 
     return (
-        <div className="mx-auto max-w-3xl">
-            <div className="mb-8">
-                <h1 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+        <div className="flex flex-col min-h-[500px]">
+            {/* Header */}
+            <div className="border-b-2 border-[#3b4890] pb-3 mb-4">
+                <h1 className="text-xl font-bold text-[#333] mb-1">
                     {post.title}
                 </h1>
-                <div className="mt-4 flex items-center gap-2 text-gray-500">
-                    <span className="font-medium text-gray-900">{post.author.username}</span>
-                    <span>•</span>
-                    <time>{formatDistanceToNow(post.createdAt, { addSuffix: true })}</time>
+                <div className="flex justify-between items-center text-xs text-gray-500">
+                    <div className="flex items-center gap-2">
+                        <span className="font-bold text-[#333]">{post.author.username}</span>
+                        <span className="text-gray-300">|</span>
+                        <span>{format(post.createdAt, 'yyyy.MM.dd HH:mm')}</span>
+                    </div>
+                    <div>
+                        {/* Placeholder for views/upvotes */}
+                        <span>Views 0</span>
+                    </div>
                 </div>
             </div>
 
-            <div className="prose prose-zinc max-w-none border-b border-gray-200 pb-8">
-                <p className="whitespace-pre-wrap text-lg leading-8 text-gray-700">{post.content}</p>
+            {/* Content */}
+            <div className="prose max-w-none min-h-[200px] mb-10 text-sm leading-relaxed text-[#333] p-2">
+                {post.content}
             </div>
 
-            <div className="pt-8">
-                <h2 className="text-lg font-bold text-gray-900">
-                    Comments ({post.comments.length})
-                </h2>
+            {/* Buttons */}
+            <div className="flex justify-end border-b border-[#ccc] pb-4 mb-4">
+                <Link href="/" className="px-3 py-1 border border-[#ccc] text-xs bg-[#f9f9f9] hover:bg-white text-gray-600">
+                    List
+                </Link>
+            </div>
 
-                <div className="mt-6 space-y-6">
+            {/* Comments */}
+            <div className="bg-[#f9f9f9] border border-[#ddd] p-4">
+                <div className="flex items-center gap-2 mb-3 border-b border-[#eee] pb-2">
+                    <span className="font-bold text-[#3b4890] text-sm">Comments</span>
+                    <span className="text-red-600 font-bold text-sm">{post.comments.length}</span>
+                </div>
+
+                <div className="space-y-2 mb-6">
                     {post.comments.map((comment) => (
-                        <div key={comment.id} className="flex gap-x-4">
-                            <div className="flex-auto rounded-xl bg-gray-50 p-4">
-                                <div className="flex justify-between gap-x-4">
-                                    <div className="font-semibold text-gray-900">{comment.author.username}</div>
-                                    <time className="text-xs text-gray-500">
-                                        {formatDistanceToNow(comment.createdAt, { addSuffix: true })}
-                                    </time>
+                        <div key={comment.id} className="flex justify-between items-start border-b border-[#eee] pb-2 last:border-0 hover:bg-[#eee] transition-colors p-1">
+                            <div className="flex-1">
+                                <div className="flex items-center gap-2 mb-1">
+                                    <span className="text-xs font-bold text-[#333]">{comment.author.username}</span>
+                                    <span className="text-[10px] text-gray-400">
+                                        {format(comment.createdAt, 'MM.dd HH:mm')}
+                                    </span>
                                 </div>
-                                <p className="mt-2 text-sm text-gray-700">{comment.content}</p>
+                                <p className="text-sm text-[#444] whitespace-pre-wrap">{comment.content}</p>
                             </div>
                         </div>
                     ))}
                     {post.comments.length === 0 && (
-                        <p className="text-gray-500 text-sm italic">No comments yet. Be the first to share your thoughts!</p>
+                        <div className="text-center text-gray-400 text-xs py-4">
+                            Empty comments.
+                        </div>
                     )}
                 </div>
 
+                {/* Comment Form */}
                 {session ? (
                     <CommentForm postId={post.id} />
                 ) : (
-                    <div className="mt-6 rounded-md bg-gray-50 p-4 text-center text-sm text-gray-500">
-                        Please <a href="/login" className="underline hover:text-black">login</a> to comment.
+                    <div className="bg-white border border-[#ddd] p-3 text-center text-xs text-gray-500">
+                        <Link href="/login" className="text-blue-600 underline">Login</Link> to write a comment.
                     </div>
                 )}
             </div>

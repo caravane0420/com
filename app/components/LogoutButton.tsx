@@ -6,9 +6,9 @@ export default function LogoutButton() {
     return (
         <button
             onClick={() => logout()}
-            className="text-sm font-medium hover:text-gray-900 text-gray-500"
+            className="text-sm hover:underline hover:text-gray-200 text-white"
         >
-            Log out
+            Logout
         </button>
     )
 }
