@@ -61,6 +61,7 @@ export default function WriteForm({ user }: WriteFormProps) {
                     name="title"
                     className="w-full border border-gray-300 rounded px-3 py-2 focus:ring-1 focus:ring-[#3b4890] focus:border-[#3b4890] outline-none"
                     placeholder="제목을 입력하세요"
+                    required
                 />
                 {state?.errors?.title && <p className="text-red-500 text-xs mt-1">{state.errors.title}</p>}
             </div>
@@ -79,6 +80,7 @@ export default function WriteForm({ user }: WriteFormProps) {
                     onChange={(e) => setContent(e.target.value)}
                     className="w-full border border-gray-300 rounded px-3 py-2 focus:ring-1 focus:ring-[#3b4890] focus:border-[#3b4890] outline-none"
                     placeholder="내용을 입력하세요"
+                    required
                 />
                 {state?.errors?.content && <p className="text-red-500 text-xs mt-1">{state.errors.content}</p>}
             </div>
