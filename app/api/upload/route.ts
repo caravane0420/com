@@ -8,7 +8,7 @@ export async function POST(request: Request): Promise<NextResponse> {
         const jsonResponse = await handleUpload({
             body,
             request,
-            onBeforeGenerateToken: async (pathname: string, clientPayload?: string) => {
+            onBeforeGenerateToken: async (pathname: string, clientPayload: string | null) => {
                 // Allow any image upload for now (anonymous or logged in)
                 // You can add stricter auth checks here if needed
                 return {
