@@ -4,6 +4,8 @@ import { notFound } from 'next/navigation'
 import CommentForm from '@/app/components/CommentForm'
 import { getSession } from '@/lib/session'
 import Link from 'next/link'
+import ViewIncrementer from '@/app/components/ViewIncrementer'
+import RecommendButton from '@/app/components/RecommendButton'
 
 interface PageProps {
     params: Promise<{ id: string }>
@@ -36,6 +38,8 @@ export default async function PostPage(props: PageProps) {
 
     return (
         <div className="flex flex-col min-h-[500px]">
+            <ViewIncrementer postId={id} />
+
             {/* Header */}
             <div className="border-b-2 border-[#3b4890] pb-3 mb-4">
                 <h1 className="text-xl font-bold text-[#333] mb-1">
@@ -47,9 +51,9 @@ export default async function PostPage(props: PageProps) {
                         <span className="text-gray-300">|</span>
                         <span>{format(post.createdAt, 'yyyy.MM.dd HH:mm')}</span>
                     </div>
-                    <div>
-                        {/* Placeholder for views/upvotes */}
-                        <span>Views 0</span>
+                    <div className="flex items-center gap-2">
+                        <span>조회 {post.viewCount}</span>
+                        <span>추천 {post.upCount}</span>
                     </div>
                 </div>
             </div>
@@ -59,18 +63,21 @@ export default async function PostPage(props: PageProps) {
                 {post.content}
             </div>
 
+            {/* Recommendation */}
+            <RecommendButton postId={post.id} count={post.upCount} />
+
             {/* Buttons */}
             <div className="flex justify-end border-b border-[#ccc] pb-4 mb-4">
                 <Link href="/" className="px-3 py-1 border border-[#ccc] text-xs bg-[#f9f9f9] hover:bg-white text-gray-600">
-                    List
+                    목록
                 </Link>
             </div>
 
             {/* Comments */}
             <div className="bg-[#f9f9f9] border border-[#ddd] p-4">
                 <div className="flex items-center gap-2 mb-3 border-b border-[#eee] pb-2">
-                    <span className="font-bold text-[#3b4890] text-sm">Comments</span>
-                    <span className="text-red-600 font-bold text-sm">{post.comments.length}</span>
+                    <span className="font-bold text-[#3b4890] text-sm">전체 댓글</span>
+                    <span className="text-red-600 font-bold text-sm">{post.comments.length}개</span>
                 </div>
 
                 <div className="space-y-2 mb-6">
@@ -89,7 +96,7 @@ export default async function PostPage(props: PageProps) {
                     ))}
                     {post.comments.length === 0 && (
                         <div className="text-center text-gray-400 text-xs py-4">
-                            Empty comments.
+                            등록된 댓글이 없습니다.
                         </div>
                     )}
                 </div>
@@ -99,7 +106,7 @@ export default async function PostPage(props: PageProps) {
                     <CommentForm postId={post.id} />
                 ) : (
                     <div className="bg-white border border-[#ddd] p-3 text-center text-xs text-gray-500">
-                        <Link href="/login" className="text-blue-600 underline">Login</Link> to write a comment.
+                        댓글을 작성하려면 <Link href="/login" className="text-blue-600 underline">로그인</Link>이 필요합니다.
                     </div>
                 )}
             </div>

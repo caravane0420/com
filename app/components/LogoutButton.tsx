@@ -8,7 +8,7 @@ export default function LogoutButton() {
             onClick={() => logout()}
             className="text-sm hover:underline hover:text-gray-200 text-white"
         >
-            Logout
+            로그아웃
         </button>
     )
 }

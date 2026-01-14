@@ -24,14 +24,14 @@ export default function CommentForm({ postId }: { postId: string }) {
                     rows={3}
                     required
                     className="flex-1 resize-none border border-[#ddd] bg-[#fff] p-2 text-sm focus:border-[#3b4890] focus:outline-none"
-                    placeholder="Leave a comment..."
+                    placeholder="댓글을 입력하세요..."
                 />
                 <button
                     type="submit"
                     disabled={isPending}
                     className="w-20 bg-[#3b4890] text-white text-sm font-bold disabled:opacity-50 hover:bg-[#2d3870]"
                 >
-                    {isPending ? '...' : 'Add'}
+                    {isPending ? '등록중' : '등록'}
                 </button>
             </div>
         </form>

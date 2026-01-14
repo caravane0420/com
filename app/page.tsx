@@ -16,24 +16,26 @@ export default async function Home() {
   return (
     <div>
       <div className="flex items-center justify-between mb-2 border-b-2 border-[#3b4890] pb-2">
-        <h2 className="text-[#3b4890] font-bold text-lg">All Posts</h2>
-        <Link href="/write" className="dc-btn font-bold">Write</Link>
+        <h2 className="text-[#3b4890] font-bold text-xl">자유 갤러리</h2>
+        <Link href="/write" className="dc-btn font-bold">글쓰기</Link>
       </div>
 
       <table className="w-full text-sm table-fixed border-collapse">
         <thead className="bg-[#f9f9f9] border-b border-[#ccc] text-gray-600 text-center">
           <tr>
-            <th className="py-2 w-16 hidden sm:table-cell">No</th>
-            <th className="py-2 text-left px-4">Title</th>
-            <th className="py-2 w-28">Author</th>
-            <th className="py-2 w-24 hidden sm:table-cell">Date</th>
+            <th className="py-2 w-12 hidden sm:table-cell">번호</th>
+            <th className="py-2 text-left px-4">제목</th>
+            <th className="py-2 w-28">글쓴이</th>
+            <th className="py-2 w-20 hidden sm:table-cell">날짜</th>
+            <th className="py-2 w-16 hidden sm:table-cell">조회</th>
+            <th className="py-2 w-16 hidden sm:table-cell">추천</th>
           </tr>
         </thead>
         <tbody>
-          {posts.map((post) => (
+          {posts.map((post, index) => (
             <tr key={post.id} className="border-b border-[#eee] hover:bg-[#f9f9f9]">
               <td className="text-center py-2 text-gray-500 text-xs hidden sm:table-cell">
-                -
+                {posts.length - index}
               </td>
               <td className="py-2 px-4 whitespace-nowrap overflow-hidden text-ellipsis">
                 <Link href={`/posts/${post.id}`} className="hover:underline text-[#333]">
@@ -52,14 +54,20 @@ export default async function Home() {
                 {post.author.username}
               </td>
               <td className="text-center py-2 text-gray-500 text-xs hidden sm:table-cell">
-                {format(post.createdAt, 'MM-dd')}
+                {format(post.createdAt, 'MM.dd')}
+              </td>
+              <td className="text-center py-2 text-gray-500 text-xs hidden sm:table-cell">
+                {post.viewCount}
+              </td>
+              <td className="text-center py-2 text-gray-500 text-xs hidden sm:table-cell">
+                {post.upCount}
               </td>
             </tr>
           ))}
           {posts.length === 0 && (
             <tr>
-              <td colSpan={4} className="py-12 text-center text-gray-500">
-                No posts yet. Be the first to write!
+              <td colSpan={6} className="py-12 text-center text-gray-500">
+                등록된 글이 없습니다. 첫 번째 글을 작성해보세요!
               </td>
             </tr>
           )}
@@ -67,7 +75,7 @@ export default async function Home() {
       </table>
 
       <div className="mt-4 flex justify-end">
-        <Link href="/write" className="dc-btn">Write</Link>
+        <Link href="/write" className="dc-btn">글쓰기</Link>
       </div>
     </div>
   )

@@ -8,24 +8,39 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(uuid())
-  username  String   @unique
+  id        String    @id @default(uuid())
+  username  String    @unique
   password  String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
   posts     Post[]
   comments  Comment[]
 }
 
+model Gallery {
+  id          String   @id // slug (e.g. 'main', 'dev')
+  name        String
+  description String?
+  createdAt   DateTime @default(now())
+  posts       Post[]
+}
+
 model Post {
-  id        String    @id @default(uuid())
+  id        String   @id @default(uuid())
   title     String
   content   String
   imageUrl  String?
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  viewCount Int      @default(0)
+  upCount   Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
   authorId  String
-  author    User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  author    User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  
+  galleryId String?  // Optional for migration compatibility, but logic will enforce it
+  gallery   Gallery? @relation(fields: [galleryId], references: [id])
+
   comments  Comment[]
 }
 
@@ -34,8 +49,10 @@ model Comment {
   content   String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  
   postId    String
   post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  
   authorId  String
   author    User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
 }
