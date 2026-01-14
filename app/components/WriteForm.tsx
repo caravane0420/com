@@ -34,29 +34,36 @@ export default function WriteForm({ user }: WriteFormProps) {
                 </div>
             )}
 
-            {!user && (
-                <div className="flex gap-2">
-                    <div className="flex-1">
-                        <label className="block text-sm font-bold text-gray-700 mb-1">닉네임</label>
-                        <input
-                            name="nickname"
-                            className="w-full border border-gray-300 rounded px-3 py-2 outline-none text-sm"
-                            placeholder="닉네임"
-                            defaultValue={state?.fields?.nickname ?? ''}
-                            required
-                        />
-                        {state?.errors?.nickname && <p className="text-red-500 text-xs mt-1">{state.errors.nickname}</p>}
-                    </div>
-                    <div className="flex-1">
-                        <label className="block text-sm font-bold text-gray-700 mb-1">비밀번호</label>
-                        <input
-                            type="password"
-                            name="password"
-                            className="w-full border border-gray-300 rounded px-3 py-2 outline-none text-sm"
-                            placeholder="비밀번호"
-                            required
-                        />
-                        {state?.errors?.password && <p className="text-red-500 text-xs mt-1">{state.errors.password}</p>}
+            {(!user || state?.errors?.nickname) && (
+                <div className="flex flex-col gap-2">
+                    {user && state?.errors?.nickname && (
+                        <div className="text-amber-600 text-sm bg-amber-50 p-2 rounded">
+                            ⚠️ 로그인 세션이 만료되었거나 확인되지 않습니다. 비회원으로 등록하려면 아래 정보를 입력하세요.
+                        </div>
+                    )}
+                    <div className="flex gap-2">
+                        <div className="flex-1">
+                            <label className="block text-sm font-bold text-gray-700 mb-1">닉네임</label>
+                            <input
+                                name="nickname"
+                                className="w-full border border-gray-300 rounded px-3 py-2 outline-none text-sm"
+                                placeholder="닉네임"
+                                defaultValue={state?.fields?.nickname ?? ''}
+                                required
+                            />
+                            {state?.errors?.nickname && <p className="text-red-500 text-xs mt-1">{state.errors.nickname}</p>}
+                        </div>
+                        <div className="flex-1">
+                            <label className="block text-sm font-bold text-gray-700 mb-1">비밀번호</label>
+                            <input
+                                type="password"
+                                name="password"
+                                className="w-full border border-gray-300 rounded px-3 py-2 outline-none text-sm"
+                                placeholder="비밀번호"
+                                required
+                            />
+                            {state?.errors?.password && <p className="text-red-500 text-xs mt-1">{state.errors.password}</p>}
+                        </div>
                     </div>
                 </div>
             )}
