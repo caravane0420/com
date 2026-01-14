@@ -32,6 +32,15 @@ export default function CommentItem({ comment, user }: CommentItemProps) {
                         </span>
                     </div>
                     <p className="text-sm text-[#444] whitespace-pre-wrap pl-1">{comment.content}</p>
+                    {comment.imageUrl && (
+                        <div className="mt-2 pl-1">
+                            <img
+                                src={comment.imageUrl}
+                                alt="comment attachment"
+                                className="max-w-[200px] max-h-[200px] object-contain border border-[#eee] rounded-sm"
+                            />
+                        </div>
+                    )}
 
                     <div className="mt-1">
                         <button

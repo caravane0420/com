@@ -33,12 +33,13 @@ const PostSchema = z.object({
     password: z.string().optional(),
 })
 
+// Update CommentSchema (remove .min(1) to allow empty content if image exists)
 const CommentSchema = z.object({
-    content: z.string().min(1, "내용을 입력해주세요."),
+    content: z.string(),
     postId: z.string(),
     nickname: z.string().optional(),
     password: z.string().optional(),
-    parentId: z.string().optional(), // For replies
+    parentId: z.string().optional(),
 })
 
 // Report Schema
@@ -70,6 +71,8 @@ export async function createReport(prevState: any, formData: FormData) {
     return { success: true, message: '신고가 접수되었습니다.' }
 }
 
+
+
 export async function signup(prevState: any, formData: FormData) {
     const result = SignupSchema.safeParse(Object.fromEntries(formData))
 
@@ -93,6 +96,8 @@ export async function signup(prevState: any, formData: FormData) {
     redirect('/')
 }
 
+
+
 export async function login(prevState: any, formData: FormData) {
     const result = LoginSchema.safeParse(Object.fromEntries(formData))
 
@@ -114,6 +119,8 @@ export async function login(prevState: any, formData: FormData) {
 export async function logout() {
     await deleteSession()
 }
+
+
 
 export async function createPost(prevState: any, formData: FormData) {
     const session = await getSession() // Use getSession to allow null (Verification not strict)
@@ -261,8 +268,27 @@ export async function createComment(prevState: any, formData: FormData) {
     const ip = headersList.get('x-forwarded-for') || '127.0.0.1'
     const maskedIp = ip.split('.').slice(0, 2).join('.')
 
+    // Manual File Handling
+    const file = formData.get('image') as File;
+    let uploadedImageUrl = '';
+    const stickerUrl = formData.get('imageUrl') as string;
+
+    if (file && file.size > 0) {
+        try {
+            const blob = await put(file.name, file, { access: 'public' });
+            uploadedImageUrl = blob.url;
+        } catch (error) {
+            console.error('Image upload failed:', error);
+        }
+    }
+
+    const finalImageUrl = uploadedImageUrl || stickerUrl;
+
     // [New] Check Restrictions
-    const restriction = await checkRestrictions(ip, session?.userId, formData.get('content') as string)
+    // Pass 'Image' as content if empty for restriction check?
+    // Or just check provided content.
+    const contentInput = formData.get('content') as string;
+    const restriction = await checkRestrictions(ip, session?.userId, contentInput || 'Image')
     if (restriction.restricted) {
         return { errors: { content: [restriction.reason!] } }
     }
@@ -273,10 +299,16 @@ export async function createComment(prevState: any, formData: FormData) {
         return { errors: result.error.flatten().fieldErrors }
     }
 
+    // Validation: Content OR Image required
+    if (!result.data.content.trim() && !finalImageUrl) {
+        return { errors: { content: ['내용 또는 이미지를 입력해주세요.'] } }
+    }
+
     const commentData: any = {
-        content: result.data.content,
+        content: result.data.content, // Allow empty string
         postId: result.data.postId,
         ipAddress: maskedIp,
+        imageUrl: finalImageUrl || null,
     }
 
     if (result.data.parentId) {

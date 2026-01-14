@@ -81,6 +81,7 @@ model Comment {
   nickname  String?
   password  String?
   ipAddress String?
+  imageUrl  String?
 
   // Nested Comments
   parentId  String?
