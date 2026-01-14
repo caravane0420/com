@@ -1,7 +1,8 @@
 'use client'
 
-import { useActionState, useState, useRef, useEffect } from 'react'
+import { useActionState, useState, useRef, useEffect, startTransition } from 'react'
 import { createComment } from '@/app/actions'
+import { upload } from '@vercel/blob/client'
 import EmoticonPicker from './EmoticonPicker'
 
 interface CommentFormProps {
@@ -15,11 +16,12 @@ export default function CommentForm({ postId, parentId, user, onSuccess }: Comme
     const [state, action, isPending] = useActionState(createComment, null)
     const formRef = useRef<HTMLFormElement>(null)
     const fileInputRef = useRef<HTMLInputElement>(null)
-    
+
     // State for attachments
     const [previewUrl, setPreviewUrl] = useState<string | null>(null)
     const [stickerUrl, setStickerUrl] = useState<string | null>(null)
     const [isImageParams, setIsImageParams] = useState(false) // Track if we have image/sticker
+    const [isUploading, setIsUploading] = useState(false)
 
     useEffect(() => {
         if (state?.success) {
@@ -55,8 +57,43 @@ export default function CommentForm({ postId, parentId, user, onSuccess }: Comme
         setIsImageParams(false)
     }
 
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault()
+        if (isPending || isUploading) return
+
+        const formData = new FormData(e.currentTarget)
+        const file = fileInputRef.current?.files?.[0]
+
+        if (file) {
+            setIsUploading(true)
+            try {
+                const newBlob = await upload(file.name, file, {
+                    access: 'public',
+                    handleUploadUrl: '/api/upload',
+                })
+                formData.set('imageUrl', newBlob.url)
+                formData.delete('image')
+            } catch (err) {
+                console.error(err)
+                alert('이미지 업로드에 실패했습니다.')
+                setIsUploading(false)
+                return
+            }
+            setIsUploading(false)
+        }
+
+        // If sticker exists, ensure it's in formData (it is via hidden input, but checking logic)
+        // Hidden input <input name="imageUrl"> covers sticker.
+        // If we uploaded a file, we overwrote `imageUrl` in formData above.
+        // Note: Logic in component clears sticker if file selected, so no conflict.
+
+        startTransition(() => {
+            action(formData)
+        })
+    }
+
     return (
-        <form ref={formRef} action={action} className="bg-white border border-[#ccc] p-3 mb-2">
+        <form ref={formRef} onSubmit={handleSubmit} className="bg-white border border-[#ccc] p-3 mb-2">
             <input type="hidden" name="postId" value={postId} />
             {parentId && <input type="hidden" name="parentId" value={parentId} />}
             {stickerUrl && <input type="hidden" name="imageUrl" value={stickerUrl} />}
@@ -97,12 +134,12 @@ export default function CommentForm({ postId, parentId, user, onSuccess }: Comme
             {/* Preview Section */}
             {(previewUrl || stickerUrl) && (
                 <div className="mb-2 relative inline-block">
-                    <img 
-                        src={previewUrl || stickerUrl!} 
-                        alt="Preview" 
+                    <img
+                        src={previewUrl || stickerUrl!}
+                        alt="Preview"
                         className="h-20 w-auto object-contain border border-gray-200"
                     />
-                    <button 
+                    <button
                         type="button"
                         onClick={handleRemoveAttachment}
                         className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs"
@@ -115,7 +152,7 @@ export default function CommentForm({ postId, parentId, user, onSuccess }: Comme
             <div className="flex justify-between items-center bg-[#f7f7f7] p-2 border-t border-[#eee]">
                 <div className="flex items-center gap-2">
                     <EmoticonPicker onSelect={handleStickerSelect} />
-                    
+
                     <button
                         type="button"
                         onClick={() => fileInputRef.current?.click()}
@@ -138,10 +175,10 @@ export default function CommentForm({ postId, parentId, user, onSuccess }: Comme
                     disabled={isPending}
                     className="w-20 bg-[#3b4890] text-white text-sm font-bold disabled:opacity-50 hover:bg-[#2d3870] py-1 rounded-sm"
                 >
-                    {isPending ? '등록중' : '등록'}
+                    {isUploading ? '업로드..' : isPending ? '등록중' : '등록'}
                 </button>
             </div>
-            
+
             {state?.errors?.content && <p className="text-red-500 text-xs mt-1">{state.errors.content}</p>}
         </form>
     )
